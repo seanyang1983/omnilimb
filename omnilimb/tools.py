@@ -886,13 +886,15 @@ def claw_skill_update(args: dict, **kwargs) -> str:
 
 
 def claw_skill_to_hermes(args: dict, **kwargs) -> str:
-    """Pro: convert installed marketplace skills into native Hermes skills,
-    then run→test→fix→retest each conversion until it loads or fails clearly."""
+    """Convert installed marketplace skills into native Hermes skills, then
+    run→test→fix→retest each conversion until it loads or fails clearly.
+    Free in 1.0."""
     del kwargs
-    # TODO(pro): 临时停用 Pro 门禁,便于功能测试。统一完善 Pro 功能时恢复下面三行:
-    #     gate = _licensing.require_pro("claw_skill_to_hermes")
-    #     if gate is not None:
-    #         return _json(gate)  # Req 1.2/1.3 — gate runs before any discovery/IO
+    # Free in 1.0: require_pro() is a no-op while all features are unlocked
+    # (it only gates when OMNILIMB_ENFORCE_LICENSE=1). Kept for reversibility.
+    gate = _licensing.require_pro("claw_skill_to_hermes")
+    if gate is not None:
+        return _json(gate)  # gate runs before any discovery/IO
     slugs = args.get("slugs")
     if isinstance(args.get("slug"), str) and args.get("slug").strip():
         slugs = [args["slug"].strip()]  # accept singular or plural

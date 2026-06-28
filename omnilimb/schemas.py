@@ -194,7 +194,7 @@ CLAW_PACK_INSTALL = {
     "name": "claw_pack_install",
     "description": (
         "Install a curated skill pack (a vetted bundle of ClawHub skills) by name. "
-        "Pro feature. Use claw_pack_list first to see available packs."
+        "Use claw_pack_list first to see available packs."
     ),
     "parameters": {
         "type": "object",
@@ -212,7 +212,7 @@ CLAW_PACK_INSTALL = {
 CLAW_SKILL_UPDATE = {
     "name": "claw_skill_update",
     "description": (
-        "Update installed ClawHub skills to their latest version. Pro feature. "
+        "Update installed ClawHub skills to their latest version. "
         "Pass a slug to update one, or all=true to update every installed skill."
     ),
     "parameters": {
@@ -250,7 +250,7 @@ CLAW_SKILL_TO_HERMES = {
     "description": (
         "Convert installed OpenClaw/ClawHub/SkillHub skills into native Hermes "
         "skills, then run+test each conversion and auto-fix until it loads or "
-        "fails clearly. Pro feature. Omit slug(s) to convert everything installed."
+        "fails clearly. Omit slug(s) to convert everything installed."
     ),
     "parameters": {
         "type": "object",

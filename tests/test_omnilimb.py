@@ -79,12 +79,17 @@ def test_runtime_unsupported_lang():
     assert payload["ok"] is False
 
 
-# --- tool registration: free-only surface --------------------------------
-def test_no_pro_tools_present():
-    for removed in ("claw_skill_to_hermes", "claw_pack_install", "claw_pack_list", "claw_skill_update"):
-        assert not hasattr(tools, removed)
-    for kept in ("claw_skill_search", "claw_skill_run", "claw_runtime", "claw_skill_list", "claw_skill_runs"):
-        assert callable(getattr(tools, kept))
+# --- tool registration: 1.0 surface — everything free --------------------
+def test_all_tools_present_and_free():
+    # In 1.0 every tool ships free, including the formerly-Pro ones
+    # (convert / packs / update) and the new open-ended learn tool.
+    for name in (
+        "claw_skill_search", "claw_skill_run", "claw_runtime",
+        "claw_skill_list", "claw_skill_runs",
+        "claw_skill_to_hermes", "claw_skill_learn",
+        "claw_pack_install", "claw_pack_list", "claw_skill_update",
+    ):
+        assert callable(getattr(tools, name)), name
 
 
 # --- backend resolution ---------------------------------------------------

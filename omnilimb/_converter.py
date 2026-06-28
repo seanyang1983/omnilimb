@@ -1067,14 +1067,13 @@ def run_conversion(
             run_fn = _default_run_fn
 
         # AI_Curation License_Gate — evaluated ONCE at the batch boundary, before
-        # any discovery-driven model call. An uncovered license returns the Pro
-        # error dict for the WHOLE batch and makes NO Language_Model call
-        # (Req 12.5). Deterministic mode never reaches this gate (Req 12.4).
-        # TODO(pro): 临时停用 AI 梳理模式的 Pro 门禁，便于免费功能测试。统一完善 Pro 功能时恢复下面四行：
-        # if mode == "ai_curated":
-        #     gate = _licensing.require_pro("ai_convert")
-        #     if gate is not None:
-        #         return gate
+        # any discovery-driven model call. Free in 1.0: require_pro() is a no-op
+        # while all features are unlocked (only gates when OMNILIMB_ENFORCE_LICENSE=1).
+        # Deterministic mode never reaches this gate (Req 12.4); kept for reversibility.
+        if mode == "ai_curated":
+            gate = _licensing.require_pro("ai_convert")
+            if gate is not None:
+                return gate
 
         try:
             output_root = _resolve_output_root(output_dir)

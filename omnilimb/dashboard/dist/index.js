@@ -272,9 +272,7 @@
   // tabs are available. These helpers are namespaced to avoid clobbering the
   // 0.80 panel's own rendering. =========================================
   var e = h;
-  var Separator = C.Separator || box("hr", "my-2 border-border");
   var useRef = (SDK.hooks && SDK.hooks.useRef) || React.useRef;
-  var useCallback = (SDK.hooks && SDK.hooks.useCallback) || React.useCallback;
   var cn = (SDK.utils && SDK.utils.cn) || function () { return Array.prototype.filter.call(arguments, Boolean).join(" "); };
   function muted(txt, cls) { return e("p", { className: cn("text-sm text-muted-foreground", cls) }, txt); }
   function errBox(msg) { return e("div", { className: "rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive" }, String(msg)); }
@@ -300,10 +298,7 @@
       stewardDesc: "A deterministic skill butler (no LLM). Ask it to health-check, recommend, diagnose, or scan the audit log — or type a command.",
       qHealth: "Health-check", qRecommend: "Recommend", qDiagnose: "Diagnose", qAudit: "Scan audit", qAbout: "About", qHelp: "Help",
       promptPh: "Type a command or question (e.g. recommend github)...", send: "Send", thinking: "Thinking...",
-      stewardBoxTitle: "Skill butler", connectHermes: "Connect Hermes",
-      connectHint: "A live Hermes agent terminal, right here. Click Connect to start a real session over the dashboard PTY.",
-      termConnect: "Connect", termDisconnect: "Disconnect", termConnecting: "connecting", termOpen: "connected", termClosed: "disconnected", termErr: "error",
-      termUnavail: "Terminal failed to load — try refreshing the page.",
+      stewardBoxTitle: "Skill butler",
     },
     zh: {
       tabConverted: "我的技能", tabSteward: "技能管家",
@@ -319,10 +314,7 @@
       stewardDesc: "一个确定性的技能管家（不调大模型）。让它做体检、推荐、诊断、扫审计——或直接打命令。",
       qHealth: "体检", qRecommend: "推荐", qDiagnose: "诊断", qAudit: "扫审计", qAbout: "关于", qHelp: "帮助",
       promptPh: "输入指令或问题（如：推荐 github）...", send: "发送", thinking: "处理中...",
-      stewardBoxTitle: "技能管家", connectHermes: "接入 Hermes",
-      connectHint: "就在这里直接接入一个实时的 Hermes 智能体终端。点「连接」即通过仪表盘 PTY 开启真实会话。",
-      termConnect: "连接", termDisconnect: "断开", termConnecting: "连接中", termOpen: "已连接", termClosed: "已断开", termErr: "出错",
-      termUnavail: "终端加载失败 —— 刷新页面再试。",
+      stewardBoxTitle: "技能管家",
     },
   };
   function useL() {
@@ -1645,98 +1637,6 @@
             res.output_path ? e("div", { className: "mt-1 text-xs font-mono text-muted-foreground" }, res.output_path) : null,
             (res.fell_back ? muted(L.fellBack, "mt-1 text-xs") : null)))
         : errBox(res.error || L.learnFail)) : null);
-  }
-
-  // ============================================================ Steward terminal (1.0)
-  var XTERM_BASE = "/dashboard-plugins/omnilimb/dist/";
-  function loadXterm() {
-    return new Promise(function (resolve, reject) {
-      if (window.Terminal && window.FitAddon) return resolve();
-      if (!document.getElementById("omni-xterm-css")) {
-        var lnk = document.createElement("link");
-        lnk.id = "omni-xterm-css"; lnk.rel = "stylesheet"; lnk.href = XTERM_BASE + "xterm.css";
-        document.head.appendChild(lnk);
-      }
-      function inject(id, src, ready, cb) {
-        if (ready()) return cb();
-        var ex = document.getElementById(id);
-        if (ex) { ex.addEventListener("load", cb); ex.addEventListener("error", function () { reject(new Error(src)); }); return; }
-        var s = document.createElement("script");
-        s.id = id; s.src = src; s.onload = cb; s.onerror = function () { reject(new Error(src)); };
-        document.head.appendChild(s);
-      }
-      inject("omni-xterm-js", XTERM_BASE + "xterm.umd.js", function () { return !!window.Terminal; }, function () {
-        inject("omni-xterm-fit", XTERM_BASE + "addon-fit.js", function () { return !!window.FitAddon; }, function () { resolve(); });
-      });
-    });
-  }
-  function HermesTerminal() {
-    var L = useL();
-    var hostRef = useRef(null);
-    var on = useState(false), connected = on[0], setConnected = on[1];
-    var cs = useState("idle"), conn = cs[0], setConn = cs[1];
-    useEffect(function () {
-      if (!connected) return undefined;
-      var host = hostRef.current;
-      if (!host) return undefined;
-      var S = { unmounting: false, ws: null, term: null, fit: null, dataDisp: null, ro: null, tmr: null, onResize: null };
-      setConn("connecting");
-      loadXterm().then(function () {
-        if (S.unmounting) return;
-        S.term = new window.Terminal({
-          cursorBlink: true, fontSize: 13, scrollback: 4000,
-          fontFamily: "ui-monospace, 'Cascadia Mono', 'JetBrains Mono', Consolas, monospace",
-          theme: { background: "#0d1f1f", foreground: "#e6f0ea", cursor: "#e6f0ea" },
-        });
-        try { S.fit = new window.FitAddon.FitAddon(); S.term.loadAddon(S.fit); } catch (x) { S.fit = null; }
-        S.term.open(host);
-        try { if (S.fit) S.fit.fit(); } catch (x) {}
-        function refit() {
-          try { if (S.fit) S.fit.fit(); } catch (x) {}
-          if (S.ws && S.ws.readyState === 1) S.ws.send("\x1b[RESIZE:" + S.term.cols + ";" + S.term.rows + "]");
-        }
-        var channel = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ("ex-" + Date.now().toString(36));
-        SDK.buildWsUrl("/api/pty", { channel: channel }).then(function (url) {
-          if (S.unmounting) return;
-          S.ws = new WebSocket(url); S.ws.binaryType = "arraybuffer";
-          S.ws.onopen = function () { setConn("open"); S.ws.send("\x1b[RESIZE:" + S.term.cols + ";" + S.term.rows + "]"); };
-          S.ws.onmessage = function (ev) { if (typeof ev.data === "string") S.term.write(ev.data); else S.term.write(new Uint8Array(ev.data)); };
-          S.ws.onclose = function () { if (!S.unmounting) setConn("closed"); };
-          S.ws.onerror = function () { if (!S.unmounting) setConn("error"); };
-          S.dataDisp = S.term.onData(function (d) { if (S.ws && S.ws.readyState === 1) S.ws.send(d); });
-        }).catch(function () { if (!S.unmounting) setConn("error"); });
-        try { S.ro = new ResizeObserver(function () { refit(); }); S.ro.observe(host); } catch (x) { S.ro = null; }
-        S.onResize = function () { refit(); };
-        window.addEventListener("resize", S.onResize);
-        S.tmr = setTimeout(refit, 250);
-      }).catch(function () { if (!S.unmounting) setConn("error"); });
-      return function () {
-        S.unmounting = true;
-        if (S.tmr) clearTimeout(S.tmr);
-        if (S.onResize) window.removeEventListener("resize", S.onResize);
-        if (S.ro) { try { S.ro.disconnect(); } catch (x) {} }
-        if (S.dataDisp) { try { S.dataDisp.dispose(); } catch (x) {} }
-        if (S.ws) { try { S.ws.close(); } catch (x) {} }
-        if (S.term) { try { S.term.dispose(); } catch (x) {} }
-      };
-    }, [connected]);
-    function statusBadge() {
-      var map = { open: "text-green-400", connecting: "text-amber-400", closed: "text-muted-foreground", error: "text-red-400" };
-      var lab = { open: L.termOpen, connecting: L.termConnecting, closed: L.termClosed, error: L.termErr, idle: "" };
-      if (!lab[conn]) return null;
-      return e("span", { className: cn("text-xs", map[conn] || "text-muted-foreground") }, lab[conn]);
-    }
-    return e(Card, null, e(CardContent, { className: "space-y-2 p-3" },
-      e("div", { className: "flex items-center gap-2" },
-        e("span", { className: "text-sm font-medium" }, L.connectHermes),
-        statusBadge(),
-        e("div", { className: "flex-1" }),
-        e(Button, { size: "sm", variant: connected ? "destructive" : "default",
-          onClick: function () { setConnected(!connected); setConn("idle"); } }, connected ? L.termDisconnect : L.termConnect)),
-      muted(L.connectHint, "text-xs"),
-      connected ? e("div", { ref: hostRef,
-        className: "h-80 w-full overflow-hidden rounded-md border border-border", style: { background: "#0d1f1f" } }) : null,
-      conn === "error" ? errBox(L.termUnavail) : null));
   }
 
   // ============================================================ Steward (1.0)
