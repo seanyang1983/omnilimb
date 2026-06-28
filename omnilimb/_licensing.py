@@ -1,7 +1,11 @@
 """Open-core licensing gate — real offline Ed25519 verification.
 
-The free tier ships all six execution tools. Pro features (audit log, curated
-skill packs, auto-update, priority support) require a signed license token.
+In Omnilimb 1.0 **every feature is free**: ``_all_features_free()`` defaults to
+True, so every gate below resolves to "unlocked" and no license is ever
+required. The verification machinery (Ed25519, tiers, feature SKUs) is kept
+intact and reversible — a downstream commercial build can set
+``OMNILIMB_ENFORCE_LICENSE=1`` to re-enable real gating, at which point the
+token format below applies.
 
 Token format (compact, JWT-like, EdDSA / Ed25519):
 
