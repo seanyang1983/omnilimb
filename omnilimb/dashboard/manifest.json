@@ -1,15 +1,14 @@
 {
   "name": "omnilimb",
   "label": "Omnilimb",
-  "description": "Run ClawHub/SkillHub skills, sandbox, browser & runtimes — operations panel.",
+  "description": "Run ClawHub/SkillHub skills, sandbox, browser & runtimes; learn skills from any source. Full operations panel.",
   "icon": "Wrench",
-  "version": "0.8.0",
+  "version": "1.0.0",
   "tab": {
     "path": "/omnilimb",
     "position": "after:skills"
   },
   "slots": [],
   "entry": "dist/index.js",
-  "css": "dist/style.css",
   "api": "plugin_api.py"
 }

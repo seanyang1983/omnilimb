@@ -28,7 +28,7 @@ from .config import get_settings
 
 logger = logging.getLogger(__name__)
 
-__version__ = "0.8.0"
+__version__ = "1.0.0"
 
 
 def _cli_available() -> bool:
@@ -72,6 +72,11 @@ def register(ctx) -> None:
         ("claw_sandbox_exec", schemas.CLAW_SANDBOX_EXEC, tools.claw_sandbox_exec),
         ("claw_browser", schemas.CLAW_BROWSER, tools.claw_browser),
         ("claw_runtime", schemas.CLAW_RUNTIME, tools.claw_runtime),
+        ("claw_pack_list", schemas.CLAW_PACK_LIST, tools.claw_pack_list),
+        ("claw_pack_install", schemas.CLAW_PACK_INSTALL, tools.claw_pack_install),
+        ("claw_skill_update", schemas.CLAW_SKILL_UPDATE, tools.claw_skill_update),
+        ("claw_skill_to_hermes", schemas.CLAW_SKILL_TO_HERMES, tools.claw_skill_to_hermes),
+        ("claw_skill_learn", schemas.CLAW_SKILL_LEARN, tools.claw_skill_learn),
     )
 
     for name, schema, handler in pairs:
@@ -99,16 +104,17 @@ def register(ctx) -> None:
         ctx.register_command(
             "exo",
             handler=tools.slash_claw,
-            description="Omnilimb status / backend / diagnostics",
-            args_hint="[status|backend|doctor]",
+            description="Omnilimb status / backend / packs info",
+            args_hint="[status|backend|doctor|packs]",
         )
     except Exception as exc:  # pragma: no cover - optional
         logger.debug("omnilimb: slash command skipped: %s", exc)
 
     s = get_settings()
     logger.info(
-        "omnilimb v%s registered (backend=%s, resolved=%s)",
+        "omnilimb v%s registered (backend=%s, resolved=%s, pro=%s)",
         __version__,
         s.backend,
         s.resolved_backend(),
+        s.is_pro(),
     )

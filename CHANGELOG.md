@@ -3,6 +3,41 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); versioning is [SemVer](https://semver.org/).
 
+## [1.0.0] - 2026-06-28
+
+**Open 1.0 — everything is free.** The previous open-core split is gone: every
+tool and every dashboard feature now ships unlocked, under MIT.
+
+### Added
+- **`claw_skill_learn`** — distill a native Hermes skill from **any** source
+  (a local path / file, a URL, or pasted text), authored to Hermes' skill
+  standards (one-sentence description, modern section order, validated and
+  written transactionally; idempotent by source hash). The open-ended `/learn`.
+- **Skill → native Hermes conversion** (`claw_skill_to_hermes`) is now free,
+  with a deterministic mode and an AI-curated mode (configurable model, with a
+  deterministic fallback) — both behind a structural validation loop.
+- `claw_pack_install` (curated skill packs), `claw_skill_update` (re-resolve +
+  reinstall stale skills) are now free.
+
+### Changed
+- **All tiers removed.** No license, nothing to buy. The optional
+  `OMNILIMB_LICENSE` / Ed25519 machinery is retained but dormant (only re-engages
+  if `OMNILIMB_ENFORCE_LICENSE=1` is set for a downstream commercial build).
+- **Dashboard rebuilt for the Hermes v0.17.0 plugin SDK** — host React (no
+  bundled React). Full panel: **Search** (with a Discover mode: leaderboards,
+  market toggle, categories), **Installed** (per-skill 体检 health score,
+  readiness, credentials, SKILL.md view/edit, smoke test, update badges,
+  export/import), **Converted**, **Favorites**, **Audit**, **技能管家** (an
+  embedded live Hermes terminal + a deterministic skill butler + a *learn from
+  any source* form), and **Settings** (with a compact overview). Bilingual
+  (EN / 简体中文).
+
+### Fixed
+- AI curation never ran for hyphenated model providers (e.g. `opencode-zen`):
+  env-var lookups now normalize the provider id, so AI-curated conversion and
+  learn work. The Settings sandbox toggle now persists. The butler's "recommend"
+  action serves from the prewarmed discovery cache (instant).
+
 ## [0.8.0] - 2026-06-12
 
 First public release — the **free community edition**, licensed under MIT.

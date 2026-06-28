@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "omnilimb"
-version = "0.8.1"
+version = "1.0.0"
 description = "Run ClawHub skills, sandbox, Playwright browser & multi-language runtimes as Hermes hands/feet. Structured JSON, zero extra LLM tokens."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -23,7 +23,10 @@ dependencies = [
 
 [project.optional-dependencies]
 browser = ["playwright>=1.44,<2"]
-dev = ["pytest>=8,<9"]
+# AI-curated skill→Hermes conversion + open-ended learn. httpx is imported
+# lazily, so the core install works without it; this extra pulls it in for AI mode.
+ai = ["httpx>=0.27"]
+dev = ["pytest>=8,<9", "httpx>=0.27"]
 
 # Hermes auto-discovers plugins exposed via this entry point group.
 [project.entry-points."hermes_agent.plugins"]
@@ -32,10 +35,11 @@ omnilimb = "omnilimb"
 [project.urls]
 Homepage = "https://github.com/seanyang1983/omnilimb"
 Issues = "https://github.com/seanyang1983/omnilimb/issues"
+Website = "https://omnilimb.com"
 
 [tool.setuptools]
 packages = ["omnilimb", "omnilimb.backends", "omnilimb.dashboard"]
 
 [tool.setuptools.package-data]
-omnilimb = ["plugin.yaml", "skills/**/*.md"]
+omnilimb = ["plugin.yaml", "packs.yaml", "skills/**/*.md"]
 "omnilimb.dashboard" = ["manifest.json", "plugin_api.py", "dist/*"]

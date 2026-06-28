@@ -1,0 +1,28 @@
+# Curated skill packs (Omnilimb Pro feature).
+#
+# A "pack" is a vendor-curated, version-pinnable bundle of ClawHub skills grouped
+# for a use case. Free users can LIST packs (`/exo packs` or claw_pack_list);
+# installing a pack (`claw_pack_install`) requires a Pro license.
+#
+# VENDOR: edit this file to curate your own verified packs. Use real ClawHub
+# slugs (owner/skill or bare slug). Keep each pack small and vetted — the value
+# you sell is curation + verification, not quantity.
+
+packs:
+  devops:
+    description: "Vetted DevOps automation skills."
+    skills:
+      - github
+      - github-api
+
+  research:
+    description: "Web search & content extraction for research workflows."
+    skills:
+      - parallel-search
+      - parallel-extract
+      - parallel-deep-research
+
+  productivity:
+    description: "Everyday productivity helpers."
+    skills:
+      - github-repos

@@ -8,7 +8,7 @@
   <a href="https://github.com/seanyang1983/omnilimb/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/seanyang1983/omnilimb?color=36e0c0&label=stars"></a>
   <a href="https://github.com/seanyang1983/omnilimb/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-36e0c0.svg"></a>
   <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-5b8cff.svg">
-  <img alt="Status" src="https://img.shields.io/badge/edition-free%20community-5b8cff.svg">
+  <img alt="Status" src="https://img.shields.io/badge/v1.0-all%20features%20free-5b8cff.svg">
   <img alt="Tokens" src="https://img.shields.io/badge/execution%20path-0%20extra%20LLM%20tokens-36e0c0.svg">
   <a href="https://www.omnilimb.com"><img alt="Website" src="https://img.shields.io/badge/web-omnilimb.com-9aa4be.svg"></a>
 </p>
@@ -42,8 +42,9 @@ pip install omnilimb        # then: hermes plugins enable omnilimb
 
 - ⚡ **Zero token overhead.** The execution path never calls a model. The agent
   decides *once*; Omnilimb does the work deterministically and hands back JSON.
-- 🧰 **A whole toolbox, one small surface.** Eight tools cover skill discovery,
-  install, run, sandbox, browser, and runtimes — no sprawling API to learn.
+- 🧰 **A whole toolbox, one small surface.** Discovery, install, run, sandbox,
+  browser, runtimes — plus skill → native Hermes conversion and open-ended
+  learning — with no sprawling API to learn.
 - 🛡️ **Safe by default.** Third-party skills run in a Docker sandbox with the
   network off and automatic rollback. Path-traversal and zip-slip guarded.
 - 🔌 **No lock-in, no phone-home.** Search talks only to the market you pick.
@@ -59,7 +60,8 @@ pip install omnilimb        # then: hermes plugins enable omnilimb
 
 ## The tools
 
-Omnilimb registers these structured-JSON tools the agent can call:
+In **1.0 every tool is free** — no tiers, no license. Omnilimb registers these
+structured-JSON tools the agent can call:
 
 | Tool | What it does |
 |------|--------------|
@@ -71,10 +73,32 @@ Omnilimb registers these structured-JSON tools the agent can call:
 | `claw_runtime` | Quick snippet in python / node / bash / ruby / go |
 | `claw_skill_list` | List locally installed skills and their provenance |
 | `claw_skill_runs` | Recent run history for installed skills (diagnostics) |
+| `claw_skill_to_hermes` | Convert an installed skill into a native Hermes skill (deterministic or AI-curated) |
+| `claw_skill_learn` | Learn a native Hermes skill from **any** source — a path, a URL, or pasted text (the open-ended `/learn`) |
+| `claw_pack_list` / `claw_pack_install` | Browse and install curated, vendor-vetted skill packs |
+| `claw_skill_update` | Re-resolve + reinstall stale market skills |
 
 <p align="center">
   <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/tools.svg" alt="The eight Omnilimb tools plus the optional dashboard UI" width="100%" />
 </p>
+
+## Convert & learn — turn anything into a native Hermes skill
+
+Two free tools take you from "found a skill" to "Hermes has it natively":
+
+- **`claw_skill_to_hermes`** converts an already-installed market skill into a
+  native Hermes skill under `<HERMES_HOME>/skills/<name>/`. Pick `deterministic`
+  (pure, offline, reproducible) or `ai_curated` (a configured OpenAI-compatible
+  model rewrites the docs, with a deterministic fallback).
+- **`claw_skill_learn`** widens the intake to **any source** — a local path, a
+  URL, or pasted text/notes — and authors a native skill from it. It's the
+  open-ended equivalent of `/learn`.
+
+Both run a structural **validation loop**, write **transactionally**, and are
+**idempotent** (re-running an unchanged source is a no-op, matched by source
+hash). Output lands in `<HERMES_HOME>/skills/<name>/` and loads like any native
+skill. Drive them from the dashboard's **技能管家 → 学习技能** form, or just tell
+the agent *"learn &lt;source&gt;"*.
 
 ## Quickstart
 
@@ -141,17 +165,25 @@ Set `omnilimb.backend` in `~/.hermes/config.yaml` (or `OMNILIMB_BACKEND`):
 
 ## Dashboard UI (optional)
 
-A dependency-free web UI ships in `dashboard/` for the Hermes dashboard. After
-enabling the plugin and restarting `hermes dashboard`, an **Omnilimb** tab
-appears (after *Skills*) with:
+A dependency-free web UI ships in `dashboard/` for the Hermes dashboard (rebuilt
+for the v0.17.0 plugin SDK; bilingual EN / 简体中文). After enabling the plugin
+and restarting `hermes dashboard`, an **Omnilimb** tab appears (after *Skills*):
 
-- **Search** — discovery across markets (leaderboards, categories) + a per-skill
-  health check (体检).
-- **Installed** — view/edit `SKILL.md`, run, smoke-test, manage credentials,
-  check readiness, import/export, uninstall.
+- **Search** — discovery across markets, plus a **Discover** mode (recommended /
+  rising / hot / newest leaderboards + category filter) and a per-skill health
+  check (体检).
+- **Installed** — each skill expands to a detail view: 体检 health score,
+  readiness (binaries + API keys), credentials, `SKILL.md` view/edit, smoke
+  test, update badges, and export/import.
+- **Converted** — skills converted to native Hermes skills (front-matter view +
+  guarded uninstall).
 - **Favorites** — bookmarked skills.
 - **Audit** — the optional JSONL audit log.
-- **Settings** — backend / market / cache / paths + diagnostics.
+- **技能管家 (Skill butler)** — an embedded live Hermes terminal, a deterministic
+  no-LLM butler (health-check / recommend / diagnose / scan audit), and a
+  **learn-from-any-source** form.
+- **Settings** — backend / market / sandbox / cache / paths, with a compact
+  overview.
 
 The UI follows the active dashboard theme and language automatically.
 
@@ -213,16 +245,16 @@ See [`CONTRIBUTING.md`](https://github.com/seanyang1983/omnilimb/blob/main/CONTR
 never imports or modifies Hermes core, every handler returns JSON and never
 raises) and how to add a market or backend.
 
-## License &amp; editions
+## License
 
-> **This is an early test / community edition, licensed under MIT — free to use.
-> A future stable version will adopt an AGPLv3 + commercial dual-license; please
-> plan accordingly.**
+> **Open 1.0 — every tool and dashboard feature is free, under MIT.** There is
+> no paid tier and no license to buy. (The optional Ed25519 licensing machinery
+> is retained but dormant; it only re-engages if a downstream build explicitly
+> sets `OMNILIMB_ENFORCE_LICENSE=1`.)
 
-This repository contains the **free community edition** only. It is feature-
-complete for finding, installing, running, and managing OpenClaw / ClawHub
-skills locally. Commercial/Pro capabilities (skill → native Hermes conversion,
-AI curation, curated packs, auto-update, assistant console) are **not** part of
-this edition and are planned for a future Pro release under a separate license.
+This repository is the full edition: skill discovery / install / run / sandbox /
+browser / runtimes, **plus** skill → native Hermes conversion (deterministic +
+AI-curated), open-ended `claw_skill_learn`, curated packs, auto-update, and the
+full dashboard (including the 技能管家 console).
 
 MIT — see [`LICENSE`](https://github.com/seanyang1983/omnilimb/blob/main/LICENSE). Not affiliated with OpenClaw / ClawHub.

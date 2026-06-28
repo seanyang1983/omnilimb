@@ -31,6 +31,7 @@ try:
     from omnilimb import tools  # noqa: E402
     from omnilimb.config import reload_settings, hermes_skills_dir  # noqa: E402
     from omnilimb.backends import reset_backend  # noqa: E402
+    from omnilimb._licensing import describe as _describe  # noqa: E402
 except Exception as exc:  # pragma: no cover - surfaced to the UI
     tools = None
     _IMPORT_ERR = str(exc)
@@ -141,15 +142,66 @@ def _guard() -> dict | None:
     return None
 
 
+def _is_pro_gate(result: dict) -> bool:
+    """Detect the Pro licensing-gate shape returned by ``require_pro``.
+
+    The gate returns ``{"ok": False, "error": "...Pro...", "upgrade": <url>,
+    "feature": <sku>}`` (see omnilimb/_licensing.py). Surfacing this as
+    ``pro_required`` lets the UI render an upgrade affordance, consistent with
+    the ``/skill_runs`` convention.
+    """
+    if not isinstance(result, dict) or result.get("ok"):
+        return False
+    if not result.get("upgrade"):
+        return False
+    err = str(result.get("error") or "").lower()
+    return "pro" in err or "plan" in err
+
+
+def _read_converted_frontmatter(path) -> dict:
+    """Never-raise: read a ``SKILL.md`` and parse its YAML frontmatter.
+
+    Reuses the plugin's ``_hermes_skill_spec._parse_frontmatter`` (the same
+    lenient parser the converter/validator use) so a dirty/non-strict-YAML
+    frontmatter still yields a mapping. Returns ``{}`` on any error or when no
+    frontmatter is present. Used by the ``/converted_skills`` and
+    ``/converted_skill`` routes to detect the ``metadata.omnilimb_source_slug``
+    provenance marker.
+    """
+    try:
+        from omnilimb._hermes_skill_spec import _parse_frontmatter
+
+        text = Path(path).read_text(encoding="utf-8", errors="replace")
+        meta = _parse_frontmatter(text)
+        return meta if isinstance(meta, dict) else {}
+    except Exception:
+        return {}
+
+
 @router.get("/status")
 async def status() -> dict:
     err = _guard()
     if err:
         return err
+    import uuid as _uuid
+
     from omnilimb.config import get_settings
     from omnilimb.backends.cli_backend import openclaw_binary
+    from omnilimb._licensing import license_status as _license_status, _UPGRADE_URL
 
     s = reload_settings()
+    # Stable per-install device id (for future seat binding; no PII).
+    device_id = ""
+    try:
+        dev_path = s.state_dir() / "device.json"
+        if dev_path.exists():
+            device_id = json.loads(dev_path.read_text(encoding="utf-8")).get("id", "")
+        if not device_id:
+            device_id = "dev_" + _uuid.uuid4().hex[:16]
+            dev_path.write_text(json.dumps({"id": device_id}), encoding="utf-8")
+    except Exception:
+        device_id = ""
+    lic = _license_status(s.license_key)
     # Aggregate signals for the dashboard stat cards (local + cheap).
     try:
         _rsum = tools._runs_summary(tools.read_skill_runs(slug=None, limit=500))
@@ -169,6 +221,18 @@ async def status() -> dict:
         "market": s.market,
         "markets_count": _mkts_count,
         "runs": {"total": int(_rsum.get("total", 0) or 0), "success_rate": _rsum.get("success_rate")},
+        "license": _describe(s.license_key),
+        "upgrade_url": _UPGRADE_URL,
+        "license_detail": {
+            "valid": lic.get("valid"),
+            "tier": lic.get("tier"),
+            "seats": lic.get("seats"),
+            "exp": lic.get("exp"),
+            "sub": lic.get("sub"),
+            "features": lic.get("features", []),
+        },
+        "pro": s.is_pro(),
+        "device_id": device_id,
         "openclaw_cli": openclaw_binary() or None,
         "sandbox_image": s.sandbox_image,
         "workspace": str(s.workspace_dir()),
@@ -474,6 +538,170 @@ def installed() -> dict:
     return out
 
 
+@router.get("/convertible_skills")
+def convertible_skills() -> dict:
+    """Skill-to-Hermes: list installed Source_Skills available for conversion.
+
+    Thin wrapper over the installed-skill scan (``claw_skill_list``); returns only
+    skills that carry a ``SKILL.md``. Never raises (Req 10.1, 10.7, 10.8).
+    """
+    err = _guard()                                    # Req 10.5
+    if err:
+        return err
+    try:
+        out = _loads(tools.claw_skill_list({}))       # reuse installed-skill scan
+        skills = [s for s in (out.get("skills") or []) if s.get("has_skill_md")]
+        return {"ok": True, "skills": skills, "count": len(skills)}
+    except Exception as exc:
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+
+
+@router.post("/convert")
+def convert(body: dict) -> dict:
+    """Skill-to-Hermes: thin-wrap the ``claw_skill_to_hermes`` tool handler.
+
+    Forwards only the recognized parameters unchanged, parses the tool's JSON
+    string via ``_loads``, and surfaces the Pro-gate shape as ``pro_required``
+    (matching the ``/skill_runs`` convention). Never reimplements the
+    discovery/mapping/validation/loop logic. Never raises (Req 10.2–10.8).
+    """
+    err = _guard()                                    # Req 10.5
+    if err:
+        return err
+    try:
+        args: dict = {}
+        for k in ("slug", "slugs", "output_dir", "overwrite", "max_iterations", "mode"):
+            if k in (body or {}):
+                args[k] = body[k]                     # forward unchanged — Req 10.7
+        result = _loads(tools.claw_skill_to_hermes(args))   # Req 10.2, 10.4
+        if _is_pro_gate(result):                      # Req 10.6
+            result["pro_required"] = True
+        return result
+    except Exception as exc:
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+
+
+@router.post("/learn")
+def learn(body: dict) -> dict:
+    """Open-ended skill distillation: thin-wrap the ``claw_skill_learn`` tool.
+
+    Learns a native Hermes skill from any source (local path / URL / pasted
+    text). Forwards only recognized params; parses the tool's JSON via
+    ``_loads``. Free in 1.0. Never raises.
+    """
+    err = _guard()
+    if err:
+        return err
+    try:
+        args: dict = {}
+        for k in ("source", "source_type", "mode", "name", "overwrite", "output_dir"):
+            if k in (body or {}):
+                args[k] = body[k]
+        return _loads(tools.claw_skill_learn(args))
+    except Exception as exc:
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+
+
+@router.get("/converted_skills")
+def converted_skills() -> dict:
+    """List Converted_Skills by scanning HERMES_HOME/skills and returning only
+    those whose SKILL.md frontmatter carries metadata.omnilimb_source_slug."""
+    err = _guard()                                   # Req 10.9
+    if err:
+        return err
+    try:
+        root = hermes_skills_dir()
+        cards = []
+        if root.is_dir():
+            for d in sorted(root.iterdir()):
+                if not d.is_dir():
+                    continue
+                meta = _read_converted_frontmatter(d / "SKILL.md")   # never raises
+                md = (meta.get("metadata") or {}) if isinstance(meta, dict) else {}
+                src = md.get("omnilimb_source_slug")
+                if not src:
+                    continue                          # Req 10.2 — provenance filter
+                cards.append({
+                    "name": meta.get("name") or d.name,
+                    "description": meta.get("description") or "",
+                    "source_slug": src,
+                    "source_version": md.get("omnilimb_source_version"),
+                    "output_path": str(d),
+                })                                    # Req 10.3
+        return {"ok": True, "skills": cards, "count": len(cards)}
+    except Exception as exc:
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+
+
+@router.get("/converted_skill")
+def converted_skill(name: str = "") -> dict:
+    """Detail of a single Converted_Skill, read directly from
+    HERMES_HOME/skills/<name>. Does NOT parse the omnilimb workspace (Req 10.4)."""
+    err = _guard()                                   # Req 10.9
+    if err:
+        return err
+    try:
+        name = (name or "").strip()
+        root = hermes_skills_dir()
+        d = (root / name).resolve()
+        if name and (d == root.resolve() or d.parent != root.resolve()):
+            return {"ok": False, "error": f"invalid converted skill: {name}"}
+        skill_md = d / "SKILL.md"
+        meta = _read_converted_frontmatter(skill_md)
+        md = (meta.get("metadata") or {}) if isinstance(meta, dict) else {}
+        if not d.is_dir() or not skill_md.exists() or not md.get("omnilimb_source_slug"):
+            return {"ok": False, "error": f"converted skill not found: {name}"}   # Req 10.5
+        files = [p.relative_to(d).as_posix() for p in sorted(d.rglob("*")) if p.is_file()]
+        return {
+            "ok": True,
+            "name": meta.get("name") or name,
+            "skill_md": skill_md.read_text(encoding="utf-8", errors="replace"),
+            "files": files,
+            "source_slug": md.get("omnilimb_source_slug"),
+            "source_version": md.get("omnilimb_source_version"),
+            "output_path": str(root / name),
+        }
+    except Exception as exc:
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+
+
+@router.post("/converted_uninstall")
+def converted_uninstall(body: dict) -> dict:
+    """Delete a Converted_Skill directory (``HERMES_HOME/skills/<name>``).
+
+    Path-guarded AND provenance-guarded: the resolved target must be a direct
+    child of the skills root (no traversal/escape) AND its SKILL.md frontmatter
+    must carry metadata.omnilimb_source_slug — so this ONLY ever deletes
+    omnilimb-converted skills, never arbitrary native skills. Never raises.
+    """
+    err = _guard()
+    if err:
+        return err
+    try:
+        name = str(body.get("name", "")).strip()
+        if not name:
+            return {"ok": False, "error": "name is required"}
+        root = hermes_skills_dir()
+        d = (root / name).resolve()
+        # PATH GUARD: must be a direct, real child of skills root (no traversal/escape).
+        if d == root.resolve() or d.parent != root.resolve():
+            return {"ok": False, "error": f"invalid converted skill: {name}"}
+        # Existence + PROVENANCE check: only delete omnilimb-converted skills.
+        meta = _read_converted_frontmatter(d / "SKILL.md")
+        md = (meta.get("metadata") or {}) if isinstance(meta, dict) else {}
+        if not d.is_dir() or not (d / "SKILL.md").exists() or not md.get("omnilimb_source_slug"):
+            return {"ok": False, "error": f"converted skill not found: {name}"}
+        import shutil
+
+        try:
+            shutil.rmtree(d)
+            return {"ok": True, "name": name, "removed": str(d)}
+        except Exception as exc:
+            return {"ok": False, "error": f"uninstall failed: {type(exc).__name__}: {exc}"}
+    except Exception as exc:
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+
+
 @router.post("/uninstall")
 async def uninstall(body: dict) -> dict:
     """Remove an installed skill directory (``<workspace>/skills/<slug>``).
@@ -511,10 +739,14 @@ async def uninstall(body: dict) -> dict:
 
 @router.get("/skill_runs")
 async def skill_runs(slug: str = "", limit: int = 100, only_failed: bool = False) -> dict:
-    """Per-skill run history + summary (recording and viewing are both free)."""
+    """Pro: per-skill run history + summary. Viewing is Pro-gated (recording is free)."""
     err = _guard()
     if err:
         return err
+    s = reload_settings()
+    if not s.is_pro():
+        return {"ok": False, "pro_required": True,
+                "error": "skill run history is a Pro feature"}
     runs = tools.read_skill_runs(slug=(slug or None), limit=limit, only_failed=only_failed)
     return {
         "ok": True,
@@ -793,7 +1025,7 @@ def skill_smoketest(body: dict) -> dict:
 # --- E: settings (UI-editable; written to overrides, never config.yaml) ---
 _SETTINGS_WHITELIST = {
     "backend", "market", "workspace", "discover_ttl_s", "discover_limit",
-    "cache_enabled", "cache_max_age_s", "audit_log", "sandbox_image",
+    "cache_enabled", "cache_max_age_s", "audit_log", "sandbox_enabled", "sandbox_image",
     "browser_headless", "sandbox_network",
 }
 
@@ -843,7 +1075,7 @@ async def settings_set(body: dict) -> dict:
                 clean[k] = int(v)
             except Exception:
                 return {"ok": False, "error": f"{k} must be an integer"}
-        elif k in ("cache_enabled", "audit_log", "browser_headless", "sandbox_network"):
+        elif k in ("cache_enabled", "audit_log", "browser_headless", "sandbox_network", "sandbox_enabled"):
             clean[k] = bool(v)
         else:
             clean[k] = str(v)
@@ -861,7 +1093,69 @@ async def settings_set(body: dict) -> dict:
     return {"ok": True, "saved": clean}
 
 
-# --- skill health + Hermes-fit score (free, per-skill) -------------------
+@router.post("/activate_license")
+async def activate_license(body: dict) -> dict:
+    """Paste/persist a purchased Omnilimb Pro license key, or clear it.
+
+    The key is an offline-verified Ed25519 token (no phone-home). We verify it
+    BEFORE persisting; an invalid/expired/revoked key is rejected without being
+    saved. A valid key (or an empty key to deactivate) is written to the UI
+    overrides layer — never the hand-authored config.yaml — and settings are
+    reloaded so the license + is_pro cache re-evaluate immediately.
+    """
+    err = _guard()
+    if err:
+        return err
+    import json as _json
+
+    from omnilimb.config import _overrides_path
+    from omnilimb._licensing import (
+        license_status as _ls,
+        describe as _desc,
+        _UPGRADE_URL,
+    )
+
+    key = str((body or {}).get("key", "")).strip()
+    # Verify before persisting so a bad key never gets saved.
+    if key:
+        chk = _ls(key)
+        if not chk.get("valid"):
+            return {
+                "ok": False,
+                "valid": False,
+                "reason": chk.get("reason"),
+                "error": f"invalid license: {chk.get('reason')}",
+                "upgrade_url": _UPGRADE_URL,
+            }
+    p = _overrides_path()
+    cur: dict = {}
+    if p.exists():
+        try:
+            cur = _json.loads(p.read_text(encoding="utf-8")) or {}
+        except Exception:
+            cur = {}
+    if key:
+        cur["license_key"] = key
+    else:
+        cur.pop("license_key", None)  # empty key => deactivate
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(_json.dumps(cur, indent=2, ensure_ascii=False), encoding="utf-8")
+    s = reload_settings()
+    st = _ls(s.license_key)
+    return {
+        "ok": True,
+        "valid": bool(st.get("valid")),
+        "pro": s.is_pro(),
+        "license": _desc(s.license_key),
+        "reason": st.get("reason"),
+        "tier": st.get("tier"),
+        "exp": st.get("exp"),
+        "features": st.get("features", []),
+        "upgrade_url": _UPGRADE_URL,
+    }
+
+
+# --- Pro-3: skill health + Hermes-fit score ------------------------------
 @router.get("/skill_score")
 def skill_score(slug: str = "") -> dict:
     """Free (per-skill): transparent 0-100 health/fit score for a skill.
@@ -941,6 +1235,428 @@ def skill_score(slug: str = "") -> dict:
     result["slug"] = slug
     result["installed"] = installed
     return result
+
+
+# --- Omnilimb 助手：确定性人话报告（不依赖 LLM，全部基于本插件工具）------------
+def _fmt_pct(x):
+    return (str(round(x * 100)) + "%") if x is not None else "—"
+
+
+def _assist_health() -> str:
+    inst = _loads(tools.claw_skill_list({})).get("skills", []) or []
+    if not inst:
+        return "你还没安装任何技能。到「搜索」标签找几个装上，我再帮你体检。"
+    lines = ["**已安装技能体检**（共 %d 个）：" % len(inst), ""]
+    problems = []
+    for sk in inst:
+        slug = sk.get("slug") or sk.get("name")
+        runs = tools.read_skill_runs(slug=slug, limit=100)
+        sm = tools._runs_summary(runs)
+        sr = sm.get("success_rate")
+        tag = "✅" if (sr is None or sr >= 0.9) else ("⚠️" if sr >= 0.6 else "⛔")
+        if sm["total"] and sr is not None and sr < 0.6:
+            problems.append(slug)
+        detail = "未跑过" if not sm["total"] else ("%d 次调用 · 成功率 %s · 平均 %sms" % (
+            sm["total"], _fmt_pct(sr), sm.get("avg_ms") if sm.get("avg_ms") is not None else "—"))
+        lines.append("- %s **%s** — %s" % (tag, slug, detail))
+    lines.append("")
+    if problems:
+        lines.append("**需关注**：" + "、".join(problems) + " 近期失败偏多，建议用「诊断某技能」看错误，"
+                     "或检查依赖/凭据。")
+    else:
+        lines.append("整体健康，没有明显问题技能。")
+    return "\n".join(lines)
+
+
+def _extract_reco_keyword(q: str) -> str:
+    """Pull a topic keyword out of a free-form recommend command, e.g.
+    '推荐几个 github 相关的' → 'github'; '推荐 浏览器' → '浏览器'."""
+    if not q:
+        return ""
+    s = q
+    for w in ("推荐", "几个", "相关的", "相关", "最新", "热门", "一些", "的", "给我",
+              "recommend", "latest", "trending", "some", "skills", "skill", "good"):
+        s = s.replace(w, " ")
+    s = s.strip(" ，,。.、:：")
+    toks = re.findall(r"[A-Za-z0-9._-]{2,}", s)
+    if toks:
+        return toks[0]
+    return s.strip()
+
+
+def _extract_diag_slug(q: str) -> str:
+    """Pull a skill name out of a diagnose command, e.g. '诊断 find-skills' →
+    'find-skills'; bare '诊断' → '' (diagnose all)."""
+    if not q:
+        return ""
+    s = q
+    for w in ("诊断", "日志", "为什么", "失败", "错误", "一下", "的", "技能",
+              "diagnose", "why", "fails", "failing", "logs", "log"):
+        s = s.replace(w, " ")
+    s = s.strip(" ，,。.、:：")
+    toks = re.findall(r"[A-Za-z0-9._\-]{2,}", s)
+    if toks:
+        return toks[0]
+    return s.strip()
+
+
+def _assist_recommend(market: str, query: str = "") -> str:
+    from omnilimb import _cache, _scoring
+    from omnilimb.registries import get_registry
+
+    query = (query or "").strip()
+    s = reload_settings()
+    mk = (market or s.market or "clawhub").lower()
+    items: list = []
+    src_label = mk
+    # Fast path: no keyword → reuse the prewarmed discover board (instant, no network).
+    if not query and s.cache_enabled:
+        for tab in ("hot", "recommended"):
+            hit = _cache.cache_get(_board_key(mk, s.discover_limit, tab))
+            if hit and isinstance(hit.get("payload"), dict):
+                items = hit["payload"].get("skills", []) or []
+                if items:
+                    break
+    if not items:
+        reg = get_registry(market or None)
+        try:
+            res = reg.search(query, 12, sort="downloads")
+        except Exception as exc:
+            return "拉取市场失败：%s。可以稍后重试或在「设置」换个市场。" % exc
+        items = res.get("skills", []) if res.get("ok") else []
+        src_label = reg.id
+    if not items:
+        if query:
+            return "没找到和「%s」相关的技能，换个关键词或去「搜索」看看。" % query
+        return "当前市场没拉到可推荐的技能（可能上游暂时不可达）。"
+    scored = []
+    for it in items:
+        meta = {
+            "verified": it.get("verified"), "downloads": it.get("downloads"),
+            "stars": it.get("stars"), "has_skill_md": True,
+            "description": it.get("summary"), "version": it.get("version"),
+            "requires_bins": [], "updated_at": it.get("updated_at"),
+        }
+        sc = _scoring.score_skill(meta)
+        scored.append((sc["score"], sc["grade"], sc["recommendation"], it))
+    scored.sort(key=lambda x: x[0], reverse=True)
+    reco_label = {"recommended": "推荐", "caution": "谨慎", "not_recommended": "不推荐"}
+    header = ("**为你推荐 · 「%s」相关**（市场：%s）：" % (query, src_label)) if query \
+        else ("**为你推荐**（按综合评分，市场：%s）：" % src_label)
+    lines = [header, ""]
+    for score, grade, reco, it in scored[:6]:
+        nm = it.get("displayName") or it.get("slug")
+        summ = (it.get("summary") or "").strip().replace("\n", " ")
+        if len(summ) > 60:
+            summ = summ[:60] + "…"
+        lines.append("- **%s** `%s级` · %s — %s" % (nm, grade, reco_label.get(reco, reco), summ or "（无描述）"))
+    lines.append("\n想看某个的详细体检，安装后用「诊断已安装的技能日志」。")
+    return "\n".join(lines)
+
+
+def _diagnose_checks(slug: str, sm: dict) -> list:
+    """Dependency / credential / failure hints for one installed skill."""
+    out: list = []
+    try:
+        reqs = _declared_env_keys(slug)
+        from omnilimb.backends.native_backend import NativeBackend
+
+        nb = NativeBackend()
+        sd, _, gerr = _resolve_skill_path(slug, None)
+        bins = []
+        if not gerr:
+            md = None
+            for p in sd.iterdir():
+                if p.is_file() and p.name.lower() == "skill.md":
+                    md = p
+                    break
+            if md:
+                bins = _parse_skill_frontmatter(md.read_text(encoding="utf-8")).get("requires_bins", [])
+        missing_bin = [b for b in bins if nb._which(b) is None]
+        have = tools.credentials_for(slug)
+        missing_key = [k for k in reqs if k not in have]
+        if missing_bin:
+            out.append("  ⛔ 缺少命令行依赖：%s —— 装上后重试。" % "、".join(missing_bin))
+        if missing_key:
+            out.append("  🔑 缺少 API Key：%s —— 在详情页「凭据」区填入。" % "、".join(missing_key))
+        if not missing_bin and not missing_key and sm.get("total") and (sm.get("success_rate") or 1) < 0.6:
+            out.append("  依赖/凭据都齐，但失败偏多，建议看上面的错误信息定位（可能是参数或上游问题）。")
+    except Exception:
+        pass
+    return out
+
+
+def _diagnose_one(slug: str) -> list:
+    """Build the diagnosis block (list of markdown lines) for a single skill."""
+    runs = tools.read_skill_runs(slug=slug, limit=100)
+    sm = tools._runs_summary(runs)
+    lines: list = []
+    if not sm["total"]:
+        lines.append("**%s** — 还没有运行记录（没跑过）。可在「已安装」详情页点「试运行」跑一次再看。" % slug)
+        return lines
+    sr = sm.get("success_rate")
+    tag = "✅" if (sr is None or sr >= 0.9) else ("⚠️" if sr >= 0.6 else "⛔")
+    lines.append("%s **%s** — 近 %d 次调用，成功率 %s，平均耗时 %sms。" % (
+        tag, slug, sm["total"], _fmt_pct(sr),
+        sm.get("avg_ms") if sm.get("avg_ms") is not None else "—"))
+    fails = [r for r in runs if not r.get("ok")][:3]
+    for f in fails:
+        lines.append("  - 失败 `%s`：%s" % (f.get("entry") or "?", str(f.get("error") or "未知错误")[:120]))
+    lines.extend(_diagnose_checks(slug, sm))
+    return lines
+
+
+def _assist_diagnose(slug: str) -> str:
+    slug = (slug or "").strip()
+    if slug:
+        return "\n".join(["**诊断：%s**" % slug, ""] + _diagnose_one(slug))
+    # No slug → diagnose every installed skill's logs.
+    inst = _loads(tools.claw_skill_list({})).get("skills", []) or []
+    if not inst:
+        return "你还没安装任何技能。到「搜索」标签装几个，再回来诊断它们的日志。"
+    parts = ["**已安装技能日志诊断**（共 %d 个）：" % len(inst), ""]
+    untested = []
+    for sk in inst:
+        s = sk.get("slug") or sk.get("name")
+        block = _diagnose_one(s)
+        # Collapse the "no runs yet" skills into one summary line at the end.
+        if len(block) == 1 and "还没有运行记录" in block[0]:
+            untested.append(s)
+            continue
+        parts.extend(block)
+        parts.append("")
+    if untested:
+        parts.append("**还没跑过**（无日志可诊断）：" + "、".join(untested))
+    return "\n".join(parts).rstrip()
+
+
+def _assist_audit() -> str:
+    s = reload_settings()
+    path = s.state_dir() / "audit.jsonl"
+    if not path.exists():
+        return "还没有审计记录。在「设置」开启「审计日志记录」后，工具调用就会被记录。"
+    fails = []
+    try:
+        for line in reversed(path.read_text(encoding="utf-8").splitlines()):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rec = json.loads(line)
+            except Exception:
+                continue
+            if not rec.get("ok"):
+                fails.append(rec)
+            if len(fails) >= 50:
+                break
+    except Exception:
+        pass
+    if not fails:
+        return "审计日志里最近没有失败记录，一切正常。"
+    by_tool: dict = {}
+    for r in fails:
+        k = r.get("tool") or "?"
+        by_tool[k] = by_tool.get(k, 0) + 1
+    lines = ["**审计里的失败**（最近 %d 条）：" % len(fails), ""]
+    for tool_name, n in sorted(by_tool.items(), key=lambda x: -x[1]):
+        lines.append("- `%s`：%d 次失败" % (tool_name, n))
+    sample = fails[0]
+    lines.append("\n最近一条：`%s` — %s" % (sample.get("tool"), str(sample.get("error") or "?")[:140]))
+    lines.append("\n建议：失败集中在某工具，说明它依赖的外部条件（网络/依赖/凭据）有问题，"
+                 "针对该工具用「诊断」细看。")
+    return "\n".join(lines)
+
+
+_ASSIST_HELP = (
+    "我是 **Omnilimb 技能管家**，只管技能这件事。你可以：\n"
+    "- 点「体检已装技能」看哪些技能有问题\n"
+    "- 点「推荐最新」让我挑值得装的\n"
+    "- 点「诊断已安装的技能日志」看它们为什么失败\n"
+    "- 点「扫审计」归纳最近的失败\n"
+    "- 点「更多」看我能做的全部事情\n"
+    "\n也可以直接问，比如「推荐几个 github 相关的」「我的技能有没有问题」。"
+)
+
+
+_ASSIST_ABOUT = (
+    "# Omnilimb 技能管家 · 完整说明书\n"
+    "\n"
+    "我是 **Omnilimb 技能管家**——Pro 版的核心功能，一个**插件原生、不消耗 LLM token** 的确定性助手。"
+    "我不替你写代码、不闲聊，只把 Omnilimb 自己的工具（运行记录、评分引擎、依赖/凭据检查、审计日志）"
+    "整理成你看得懂的人话报告，并能直接帮你把这些事做掉。\n"
+    "\n"
+    "> 用法：点下面的快捷按钮，或在输入框**用人话直接说**——「我的技能有没有问题」「推荐几个 github 相关的」"
+    "「为什么 xxx 老失败」「审计里有啥异常」。我会自动判断你想做哪件事。\n"
+    "\n"
+    "---\n"
+    "\n"
+    "## 一、体检已装技能（健康总览）\n"
+    "**做什么**：扫描你所有已安装技能的真实运行记录，按成功率给出 ✅ 正常 / ⚠️ 注意 / ⛔ 异常，"
+    "点名近期失败偏多、需要关注的技能。\n"
+    "**怎么读**：每行 = 技能名 + 调用次数 + 成功率 + 平均耗时。✅ 表示稳定可用；⚠️ 偶发失败；⛔ 经常失败要处理。\n"
+    "**下一步**：看到 ⚠️/⛔ 的技能，点「诊断」深入看它为什么失败。\n"
+    "**什么时候用**：装了一批技能后、或感觉某个技能不稳时，先体检一遍心里有数。\n"
+    "\n"
+    "## 二、推荐最新（该装什么）\n"
+    "**做什么**：从当前市场拉技能，用五维加权评分排序，挑出最值得装的几个，给出 A–D 等级和推荐结论。\n"
+    "**评分口径**（满分 100，纯规则、可解释、不靠 AI 猜）：\n"
+    "- **可信度 25**：是否官方验证 / 通过安全审核、下载量、星标、有无来源。\n"
+    "- **完整性 20**：有没有 SKILL.md、描述是否完整、有没有版本号。\n"
+    "- **Hermes 兼容性 30**（权重最高，体现产品定位）：是否走确定性结构化 JSON 工具、依赖是否就绪、许可证是否宽松。\n"
+    "- **维护度 15**：最近更新时间、版本能否锁定。\n"
+    "- **安全 10**：联网/执行命令等能力的风险信号。\n"
+    "- **实测可靠性加成**：装上并真跑过后，成功率 ≥90% 再 **+5**，<60% **−8** 并打硬警告——所以"
+    "**装上跑过的分数比商店静态分更准**。\n"
+    "**等级**：≥85 A / ≥70 B / ≥50 C / 其余 D。\n"
+    "\n"
+    "## 三、诊断已安装的技能日志（为什么失败）\n"
+    "**做什么**：逐个已装技能看调用次数、成功率、最近几条失败原因，并自动检查它**缺不缺命令行依赖、"
+    "缺不缺 API Key**。\n"
+    "**怎么读**：\n"
+    "- ⛔ **缺少命令行依赖** → 去装那个命令（如 `git` / `ffmpeg`），装好再用。\n"
+    "- 🔑 **缺少 API Key** → 到该技能详情页「API Key / 凭据」区填上（键名是技能声明的环境变量，如 `OPENAI_API_KEY`）。\n"
+    "- 依赖/凭据都齐但还失败 → 多半是参数用法或上游服务问题，看失败行里的具体错误。\n"
+    "**什么时候用**：体检发现某技能 ⚠️/⛔，或它跑出来结果不对时。\n"
+    "\n"
+    "## 四、扫描审计并修复（全局排查）\n"
+    "**做什么**：归纳审计日志里最近的失败，按工具聚合（哪个工具失败几次），定位是哪一环的外部条件"
+    "（网络 / 依赖 / 凭据）出了问题。\n"
+    "**怎么读**：失败集中在某个工具 = 那个工具依赖的外部条件有问题，针对它去「诊断」细看。\n"
+    "**前提**：在「设置」里开启了「审计日志记录」，工具调用才会被记录。\n"
+    "\n"
+    "---\n"
+    "\n"
+    "## 常见问题 & 处理\n"
+    "- **冒烟测试显示失败/退出码非 0**：多数技能是给 Agent 用的「操作手册」（SKILL.md + 需要带参数的脚本），"
+    "空参数跑当然会报 usage——这不代表技能坏了。真正使用时由 Hermes 大脑按手册带正确参数调用。\n"
+    "- **某技能成功率低**：先「诊断」看缺依赖还是缺 Key；都齐还低，就是参数或上游问题。\n"
+    "- **推荐分偏低**：很多市场不公开下载量/星标，可信度那项会保守给分；装上真跑过后实测加成会拉高分数。\n"
+    "- **纯文档型技能**：只给 Agent 提供说明/提示词，没有可执行脚本，无需冒烟测试。\n"
+    "\n"
+    "## 用好技能的几条原则（像管代码一样管技能）\n"
+    "- **小而专**：一个技能干一件事，组合使用比一个大而全的更可靠。\n"
+    "- **锁版本**：认准能锁版本的技能，更新前先看变更。\n"
+    "- **盯成功率**：用「体检」持续观察实测成功率，而不是只看商店评分。\n"
+    "- **最小权限**：留意「安全」维度里联网+执行命令的技能，按需授权。\n"
+    "\n"
+    "---\n"
+    "\n"
+    "## 它和上面的终端是什么关系\n"
+    "上方的**终端**是真正「接入 Hermes」的地方：让 Hermes 的大脑**零额外消耗地驱动 OpenClaw 技能**、跑真实命令。"
+    "而我（下面这个技能管家）只读取这些运行产生的记录，给你做体检和诊断——**终端负责干活，我负责看懂结果、帮你决策**。"
+    "所以你可以把终端收起来，专心和我对话。"
+)
+
+
+_ASSIST_LEARN = (
+    "# 学习新技能（claw_skill_learn）\n"
+    "\n"
+    "我能从**任意来源**蒸馏出一个**原生 Hermes 技能**（开放进料版的 `/learn`），"
+    "并按 Hermes 规范写好 SKILL.md（描述 ≤60 字、章节齐全、author=Hermes）。\n"
+    "\n"
+    "## 支持的来源\n"
+    "- 本地目录或文件路径（如 `D:\\projects\\acme-sdk`、`~/notes/deploy.md`）\n"
+    "- 一个网址 URL（如某个 API 文档页）\n"
+    "- 直接粘贴的文本 / 笔记 / 当前对话片段\n"
+    "\n"
+    "## 怎么用\n"
+    "- 直接对我说「**学习 <来源>**」，例如「学习 https://x/y 的用法」「学习 D:\\notes\\deploy.md」"
+    "—— 我会一步到位：收集 → 蒸馏 → 校验 → 落盘。\n"
+    "- 或用上方的「**学习**」表单填来源、模式（AI 策展 / 离线）、技能名。\n"
+    "\n"
+    "## 机制\n"
+    "走**验证循环 + 幂等 + 事务写**：来源没变不重复写；结构不合格不落盘。"
+    "默认 `ai_curated`（用模型按 HARDLINE 标准撰写），模型不可用时自动回退离线草稿。"
+)
+
+
+def _extract_learn_source(q: str) -> str:
+    """Strip a leading learn verb so '学习 <source>' yields just <source>."""
+    s = (q or "").strip()
+    for w in ("学习一下", "学一下", "学习", "学会", "记住怎么", "记住",
+              "沉淀成技能", "做成技能", "存成命令", "学", "learn", "记一下"):
+        if s.lower().startswith(w.lower()):
+            s = s[len(w):].strip()
+            break
+    return s.lstrip("：:，,。.、 ").strip()
+
+
+def _assist_learn(q: str) -> str:
+    """Learn a skill from an open-ended source, or explain the feature."""
+    source = _extract_learn_source(q)
+    if not source:
+        return _ASSIST_LEARN
+    try:
+        res = _loads(tools.claw_skill_learn(
+            {"source": source, "source_type": "auto", "mode": "ai_curated", "overwrite": True}))
+    except Exception as exc:
+        return "学习失败：%s。可以换个来源或稍后重试。" % exc
+    if not res.get("ok"):
+        return "学习失败：%s。来源：`%s`。" % (res.get("error") or res.get("reason") or "未知错误", source)
+    st = {"learned": "已学习", "relearned": "已重新学习",
+          "unchanged": "无变化（来源未变）"}.get(res.get("status"), res.get("status") or "完成")
+    lines = [
+        "**%s：%s**" % (st, res.get("name") or "?"),
+        "- 描述：%s" % (res.get("description") or "—"),
+        "- 来源类型：%s · 模式：%s%s" % (
+            res.get("source_type") or "?", res.get("mode") or "?",
+            "（模型不可用，已用离线草稿）" if res.get("fell_back") else ""),
+        "- 输出：`%s`" % (res.get("output_path") or "—"),
+    ]
+    v = res.get("validation") or {}
+    if v.get("findings"):
+        lines.append("- 校验提示：" + "；".join(str(f) for f in v["findings"][:3]))
+    lines.append("\n可在「已转换」标签查看；或用上方「学习」表单、或继续说「学习 <另一个来源>」。")
+    return "\n".join(lines)
+
+
+@router.post("/assistant")
+def assistant(body: dict) -> dict:
+    """Pro: deterministic, human-readable skill-management assistant (no LLM)."""
+    err = _guard()
+    if err:
+        return err
+    s = reload_settings()
+    if not s.is_pro():
+        return {"ok": False, "pro_required": True, "error": "the assistant is a Pro feature"}
+    intent = str(body.get("intent", "")).strip().lower()
+    q = str(body.get("q", "")).strip()
+    slug = str(body.get("slug", "")).strip()
+    market = str(body.get("market", "")).strip()
+    qn = q[1:].strip() if q.startswith("/") else q   # allow "/command" style
+    if not intent and qn:
+        if any(k in qn for k in ("学习", "学会", "学一下", "记住怎么", "记住", "沉淀成技能", "做成技能", "存成命令", "learn")):
+            intent = "learn"
+        elif any(k in qn for k in ("推荐", "recommend", "最新", "热门")):
+            intent = "recommend"
+        elif any(k in qn for k in ("体检", "已安装", "健康", "installed", "health")):
+            intent = "health"
+        elif any(k in qn for k in ("审计", "audit")):
+            intent = "audit"
+        elif any(k in qn for k in ("诊断", "diagnose", "失败", "错误", "为什么", "日志")) or slug:
+            intent = "diagnose"
+        elif any(k in qn for k in ("介绍", "说明", "能做", "功能", "更多", "帮助", "about", "help", "manual", "怎么用", "命令", "指令")):
+            intent = "about"
+        else:
+            intent = "help"
+    try:
+        if intent == "health":
+            reply = _assist_health()
+        elif intent == "recommend":
+            reply = _assist_recommend(market, _extract_reco_keyword(qn))
+        elif intent == "diagnose":
+            reply = _assist_diagnose(slug or _extract_diag_slug(qn))
+        elif intent == "audit":
+            reply = _assist_audit()
+        elif intent == "learn":
+            reply = _assist_learn(qn)
+        elif intent == "about":
+            reply = _ASSIST_ABOUT
+        else:
+            reply = _ASSIST_HELP
+    except Exception as exc:
+        reply = "处理时出错了：%s。可以换个动作或稍后重试。" % exc
+    return {"ok": True, "intent": intent or "help", "reply": reply}
 
 
 # --- I: import / export installed skill set ------------------------------

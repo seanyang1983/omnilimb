@@ -15,6 +15,7 @@ import re
 import time
 from typing import Any, Callable
 
+from . import _licensing
 from ._retry import with_retry
 from .backends import get_backend
 from .config import get_settings, reload_settings
@@ -712,8 +713,11 @@ def claw_skill_run(args: dict, **kwargs) -> str:
 
 
 def claw_skill_runs(args: dict, **kwargs) -> str:
-    """Read a skill's run history (for agent diagnostics)."""
+    """Pro: read a skill's run history (for agent diagnostics)."""
     del kwargs
+    gate = _licensing.require_pro("claw_skill_runs")
+    if gate is not None:
+        return _json(gate)
     slug = str(args.get("slug", "")).strip() or None
     limit = int(args.get("limit", 50) or 50)
     only_failed = bool(args.get("only_failed", False))
@@ -768,6 +772,156 @@ def claw_browser(args: dict, **kwargs) -> str:
     )
 
 
+def _load_packs() -> dict:
+    from pathlib import Path
+
+    try:
+        import yaml  # type: ignore
+
+        path = Path(__file__).parent / "packs.yaml"
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        return data.get("packs") or {}
+    except Exception as exc:  # pragma: no cover - defensive
+        logger.debug("packs load failed: %s", exc)
+        return {}
+
+
+def claw_pack_list(args: dict, **kwargs) -> str:
+    del args, kwargs
+    packs = _load_packs()
+    return _json({
+        "ok": True,
+        "pro_required_to_install": not get_settings().is_pro(),
+        "packs": {
+            name: {"description": p.get("description"), "skills": p.get("skills", [])}
+            for name, p in packs.items()
+        },
+    })
+
+
+def claw_pack_install(args: dict, **kwargs) -> str:
+    del kwargs
+    gate = _licensing.require_pro("claw_pack_install")
+    if gate is not None:
+        return _json(gate)
+    name = str(args.get("pack", "")).strip()
+    packs = _load_packs()
+    if name not in packs:
+        return _json({"ok": False, "error": f"unknown pack '{name}'", "available": list(packs)})
+    global_install = bool(args.get("global_install", False))
+    backend = get_backend()
+    s = get_settings()
+    from .backends.native_backend import NativeBackend
+
+    skill_dir = NativeBackend()._skill_dir
+    slugs = packs[name].get("skills", [])
+    results: list[dict] = []
+    newly: list = []  # skill dirs created by THIS operation (for rollback)
+    for slug in slugs:
+        existed = skill_dir(slug).exists()
+        try:
+            r = with_retry(
+                lambda slug=slug: backend.skill_install(
+                    slug=slug, verify=True, global_install=global_install
+                ),
+                retries=s.max_retries,
+                backoff_s=s.retry_backoff_s,
+                rollback=s.rollback,
+            )
+        except Exception as exc:
+            r = {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+        ok = bool(r.get("ok"))
+        if ok and not existed:
+            newly.append(skill_dir(slug))
+        results.append({"slug": slug, "ok": ok, "error": r.get("error"), "version": r.get("version")})
+
+    all_ok = all(x["ok"] for x in results) if results else False
+    rolled_back = False
+    # Transactional: on any failure, roll back the installs THIS op created.
+    if not all_ok and s.rollback and newly:
+        import shutil
+
+        for d in newly:
+            try:
+                if d.exists():
+                    shutil.rmtree(d, ignore_errors=True)
+            except Exception:  # pragma: no cover - best effort
+                pass
+        rolled_back = True
+    out: dict[str, Any] = {
+        "ok": all_ok,
+        "pack": name,
+        "transactional": True,
+        "installed": [x["slug"] for x in results if x["ok"]] if all_ok else [],
+        "results": results,
+        "rolled_back": rolled_back,
+        "backend": s.resolved_backend(),
+    }
+    if not all_ok:
+        failed = [x["slug"] for x in results if not x["ok"]]
+        out["error"] = (
+            f"pack '{name}' install failed for {failed}"
+            + (f"; rolled back {len(newly)} partial install(s)" if rolled_back else "")
+        )
+    _audit("claw_pack_install", args, out)
+    return _json(out)
+
+
+def claw_skill_update(args: dict, **kwargs) -> str:
+    del kwargs
+    gate = _licensing.require_pro("claw_skill_update")
+    if gate is not None:
+        return _json(gate)
+    slug = str(args.get("slug", "")).strip() or None
+    all_ = bool(args.get("all", False))
+    if not slug and not all_:
+        return _json({"ok": False, "error": "pass slug or all=true"})
+    backend = get_backend()
+    return _run(
+        "claw_skill_update",
+        args,
+        lambda: backend.skill_update(slug=slug, all_=all_),
+        idempotent=True,
+    )
+
+
+def claw_skill_to_hermes(args: dict, **kwargs) -> str:
+    """Pro: convert installed marketplace skills into native Hermes skills,
+    then run→test→fix→retest each conversion until it loads or fails clearly."""
+    del kwargs
+    # TODO(pro): 临时停用 Pro 门禁,便于功能测试。统一完善 Pro 功能时恢复下面三行:
+    #     gate = _licensing.require_pro("claw_skill_to_hermes")
+    #     if gate is not None:
+    #         return _json(gate)  # Req 1.2/1.3 — gate runs before any discovery/IO
+    slugs = args.get("slugs")
+    if isinstance(args.get("slug"), str) and args.get("slug").strip():
+        slugs = [args["slug"].strip()]  # accept singular or plural
+    output_dir = (
+        (str(args.get("output_dir")).strip() or None) if args.get("output_dir") else None
+    )
+    overwrite = bool(args.get("overwrite", False))
+    max_iterations = args.get("max_iterations")
+    # Conversion mode (Req 9.1/9.2, 12.1/12.2): normalize and coerce any
+    # unrecognized value to the deterministic (free) default.
+    mode = str(args.get("mode") or "deterministic").strip().lower()
+    if mode not in {"deterministic", "ai_curated"}:
+        mode = "deterministic"
+    from . import _converter
+
+    return _run(
+        "claw_skill_to_hermes",
+        args,
+        lambda: _converter.run_conversion(
+            slugs=slugs,
+            output_dir=output_dir,
+            overwrite=overwrite,
+            max_iterations=max_iterations,
+            mode=mode,
+        ),
+        idempotent=False,  # conversion has side effects; loop has its own bounded retry
+    )
+
+
 def claw_runtime(args: dict, **kwargs) -> str:
     del kwargs
     lang = str(args.get("lang", "")).strip().lower()
@@ -784,18 +938,65 @@ def claw_runtime(args: dict, **kwargs) -> str:
     )
 
 
+def claw_skill_learn(args: dict, **kwargs) -> str:
+    """Learn a native Hermes skill from any source (path / URL / text).
+
+    Open-ended `/learn` equivalent built on the converter substrate: gather the
+    source, author a SKILL.md to Hermes authoring standards, validate, and write
+    it transactionally. Free in Omnilimb 1.0.
+    """
+    del kwargs
+    source = args.get("source")
+    if not isinstance(source, str) or not source.strip():
+        return _json({"ok": False, "error": "source is required (a path, URL, or text)"})
+    source_type = str(args.get("source_type") or "auto").strip().lower()
+    if source_type not in {"auto", "path", "url", "text"}:
+        source_type = "auto"
+    mode = str(args.get("mode") or "ai_curated").strip().lower()
+    if mode not in {"ai_curated", "deterministic"}:
+        mode = "ai_curated"
+    name = (str(args.get("name")).strip() or None) if args.get("name") else None
+    overwrite = bool(args.get("overwrite", True))
+    output_dir = (str(args.get("output_dir")).strip() or None) if args.get("output_dir") else None
+    from . import _learn
+
+    return _run(
+        "claw_skill_learn",
+        args,
+        lambda: _learn.run_learn(
+            source=source.strip(),
+            source_type=source_type,
+            mode=mode,
+            name=name,
+            overwrite=overwrite,
+            output_dir=output_dir,
+        ),
+        idempotent=False,
+    )
+
+
 # --------------------------------------------------------------------------- #
 # Slash command: /exo [status|backend|doctor]
 # --------------------------------------------------------------------------- #
 def slash_claw(raw_args: str) -> str:
     sub = (raw_args or "status").strip().lower() or "status"
     s = reload_settings()
+    if sub in ("packs",):
+        packs = _load_packs()
+        if not packs:
+            return "No curated packs defined."
+        tier = "Pro" if s.is_pro() else "Free (install needs Pro)"
+        lines = [f"Curated packs ({tier}):"]
+        for name, p in packs.items():
+            lines.append(f"  {name}: {p.get('description', '')} [{len(p.get('skills', []))} skills]")
+        return "\n".join(lines)
     if sub in ("backend",):
         return f"Omnilimb backend: configured={s.backend} resolved={s.resolved_backend()}"
     if sub in ("doctor",):
         from .backends.cli_backend import openclaw_binary
 
         cli = openclaw_binary()
+        lic = _licensing.describe(s.license_key)
         lines = [
             "Omnilimb doctor:",
             f"  configured backend : {s.backend}",
@@ -804,18 +1005,11 @@ def slash_claw(raw_args: str) -> str:
             f"  openclaw CLI       : {cli or 'not found on PATH'}",
             f"  sandbox image      : {s.sandbox_image} (enabled={s.sandbox_enabled})",
             f"  workspace          : {s.workspace_dir()}",
+            f"  license            : {lic}",
         ]
         return "\n".join(lines)
     # status
     return (
-        f"Omnilimb v{_version()} | backend={s.resolved_backend()} | market={s.market}"
+        f"Omnilimb v1.0.0 | backend={s.resolved_backend()} | market={s.market} | "
+        f"edition=open (all features free) | tools=11"
     )
-
-
-def _version() -> str:
-    try:
-        from . import __version__
-
-        return __version__
-    except Exception:  # pragma: no cover - defensive
-        return "0.8.0"

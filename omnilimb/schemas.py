@@ -84,7 +84,7 @@ CLAW_SKILL_LIST = {
 CLAW_SKILL_RUNS = {
     "name": "claw_skill_runs",
     "description": (
-        "Read the run history of installed skills. Returns newest-first run "
+        "Read the run history of installed skills (Pro). Returns newest-first run "
         "records (timestamp, entry, ok, duration, error) plus a summary (total, "
         "success rate, average duration). Use to diagnose a flaky or failing skill."
     ),
@@ -180,6 +180,50 @@ CLAW_BROWSER = {
     },
 }
 
+CLAW_PACK_LIST = {
+    "name": "claw_pack_list",
+    "description": (
+        "List the available curated skill packs (vendor-verified bundles of "
+        "ClawHub skills grouped by use case). Free to browse; installing a pack "
+        "needs a Pro license."
+    ),
+    "parameters": {"type": "object", "properties": {}},
+}
+
+CLAW_PACK_INSTALL = {
+    "name": "claw_pack_install",
+    "description": (
+        "Install a curated skill pack (a vetted bundle of ClawHub skills) by name. "
+        "Pro feature. Use claw_pack_list first to see available packs."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "pack": {"type": "string", "description": "Pack name, e.g. 'devops'"},
+            "global_install": {
+                "type": "boolean",
+                "description": "Install for all local agents (default false)",
+            },
+        },
+        "required": ["pack"],
+    },
+}
+
+CLAW_SKILL_UPDATE = {
+    "name": "claw_skill_update",
+    "description": (
+        "Update installed ClawHub skills to their latest version. Pro feature. "
+        "Pass a slug to update one, or all=true to update every installed skill."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "slug": {"type": "string", "description": "Installed skill slug to update"},
+            "all": {"type": "boolean", "description": "Update all installed skills"},
+        },
+    },
+}
+
 CLAW_RUNTIME = {
     "name": "claw_runtime",
     "description": (
@@ -198,5 +242,94 @@ CLAW_RUNTIME = {
             "timeout_s": {"type": "integer", "description": "Timeout in seconds (default 60)"},
         },
         "required": ["lang", "code"],
+    },
+}
+
+CLAW_SKILL_TO_HERMES = {
+    "name": "claw_skill_to_hermes",
+    "description": (
+        "Convert installed OpenClaw/ClawHub/SkillHub skills into native Hermes "
+        "skills, then run+test each conversion and auto-fix until it loads or "
+        "fails clearly. Pro feature. Omit slug(s) to convert everything installed."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "slug": {
+                "type": "string",
+                "description": "Single installed skill slug to convert",
+            },
+            "slugs": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Installed skill slugs to convert (omit for all)",
+            },
+            "output_dir": {
+                "type": "string",
+                "description": "Where to write Hermes skills (default HERMES_HOME/skills)",
+            },
+            "overwrite": {
+                "type": "boolean",
+                "description": "Replace an existing converted skill when the source changed (default false)",
+            },
+            "max_iterations": {
+                "type": "integer",
+                "description": "Max run→test→fix→retest iterations per skill (default config max_retries)",
+            },
+            "mode": {
+                "type": "string",
+                "enum": ["deterministic", "ai_curated"],
+                "description": (
+                    "Conversion mode: 'deterministic' (default, free) or 'ai_curated' "
+                    "(Pro — rewrites SKILL.md docs with a model, scripts untouched)"
+                ),
+            },
+        },
+    },
+}
+
+CLAW_SKILL_LEARN = {
+    "name": "claw_skill_learn",
+    "description": (
+        "Learn a reusable native Hermes skill from ANY source — a local "
+        "directory or file path, a URL, or pasted text — and save it to "
+        "HERMES_HOME/skills. Open-ended equivalent of Hermes '/learn': it "
+        "gathers the source, authors a SKILL.md to the Hermes authoring "
+        "standards (one-sentence description <=60 chars, modern section order, "
+        "author Hermes), validates it, and writes it transactionally. Use "
+        "mode='ai_curated' (default) to have the configured model write the "
+        "docs; 'deterministic' for a no-model, offline draft."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "source": {
+                "type": "string",
+                "description": "What to learn from: a local dir/file path, an http(s) URL, or pasted text.",
+            },
+            "source_type": {
+                "type": "string",
+                "enum": ["auto", "path", "url", "text"],
+                "description": "Force the source kind; 'auto' (default) detects it.",
+            },
+            "mode": {
+                "type": "string",
+                "enum": ["ai_curated", "deterministic"],
+                "description": "'ai_curated' (default) writes docs with the model; 'deterministic' is offline, no model.",
+            },
+            "name": {
+                "type": "string",
+                "description": "Optional skill name override (else derived from the source).",
+            },
+            "overwrite": {
+                "type": "boolean",
+                "description": "Replace an existing skill of the same name (default true).",
+            },
+            "output_dir": {
+                "type": "string",
+                "description": "Where to write the skill (default HERMES_HOME/skills).",
+            },
+        },
+        "required": ["source"],
     },
 }

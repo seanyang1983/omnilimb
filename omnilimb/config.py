@@ -118,7 +118,9 @@ class Settings:
     # Discover homepage cache (TTL-refreshed; the 4 leaderboards = 60 items)
     discover_ttl_s: int = 21600  # 6 hours
     discover_limit: int = 15     # items per leaderboard tab
-    # Audit
+    # Pro / open-core
+    license_key: str = ""
+    # Audit (Pro)
     audit_log: bool = False
     # Extra skill markets (user-defined): [{id,type,base_url,label}]
     extra_markets: list = field(default_factory=list)
@@ -149,6 +151,11 @@ class Settings:
         d = get_hermes_home() / "omnilimb"
         d.mkdir(parents=True, exist_ok=True)
         return d
+
+    def is_pro(self) -> bool:
+        from ._licensing import is_pro
+
+        return is_pro(self.license_key)
 
 
 def _build_settings() -> Settings:
@@ -183,6 +190,7 @@ def _build_settings() -> Settings:
         cache_max_age_s=int(y.get("cache_max_age_s", 604800) or 604800),
         discover_ttl_s=int(y.get("discover_ttl_s", 21600) or 21600),
         discover_limit=int(y.get("discover_limit", 15) or 15),
+        license_key=_env("OMNILIMB_LICENSE") or str(y.get("license_key", "")),
         audit_log=_as_bool(y.get("audit_log"), False),
         extra_markets=y.get("markets") if isinstance(y.get("markets"), list) else [],
         _raw_yaml=y,
@@ -197,4 +205,10 @@ def get_settings() -> Settings:
 def reload_settings() -> Settings:
     """Drop the cache and rebuild (tests / `/exo` diagnostics)."""
     get_settings.cache_clear()
+    try:
+        from ._licensing import is_pro
+
+        is_pro.cache_clear()  # re-evaluate license/revocation on settings reload
+    except Exception:
+        pass
     return get_settings()

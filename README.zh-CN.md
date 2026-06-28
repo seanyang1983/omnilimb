@@ -8,7 +8,7 @@
   <a href="https://github.com/seanyang1983/omnilimb/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/seanyang1983/omnilimb?color=36e0c0&label=stars"></a>
   <a href="https://github.com/seanyang1983/omnilimb/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-36e0c0.svg"></a>
   <img alt="Python" src="https://img.shields.io/badge/Python-3.10%2B-5b8cff.svg">
-  <img alt="Status" src="https://img.shields.io/badge/edition-free%20community-5b8cff.svg">
+  <img alt="Status" src="https://img.shields.io/badge/v1.0-all%20features%20free-5b8cff.svg">
   <img alt="Tokens" src="https://img.shields.io/badge/execution%20path-0%20extra%20LLM%20tokens-36e0c0.svg">
   <a href="https://www.omnilimb.com"><img alt="Website" src="https://img.shields.io/badge/web-omnilimb.com-9aa4be.svg"></a>
 </p>
@@ -41,8 +41,8 @@ pip install omnilimb        # 然后:hermes plugins enable omnilimb
 
 - ⚡ **零 token 开销。** 执行路径从不调用模型。智能体只决策*一次*,Omnilimb
   确定性地把活干完,再把 JSON 结果交回去。
-- 🧰 **一整套工具箱,只有一个小接口。** 八个工具覆盖技能发现、安装、运行、沙箱、
-  浏览器和运行时——没有庞杂的 API 要学。
+- 🧰 **一整套工具箱,只有一个小接口。** 发现、安装、运行、沙箱、浏览器、运行时
+  ——再加上技能 → 原生 Hermes 转换与开放进料学习——没有庞杂的 API 要学。
 - 🛡️ **默认安全。** 第三方技能在 Docker 沙箱中运行,默认关闭网络并自动回滚。
   路径穿越与 zip-slip 均有防护。
 - 🔌 **无锁定、不回传。** 搜索只与你选定的市场通信;你的代码、缓存和审计日志
@@ -58,7 +58,7 @@ pip install omnilimb        # 然后:hermes plugins enable omnilimb
 
 ## 工具一览
 
-Omnilimb 向智能体注册以下结构化 JSON 工具:
+**1.0 起全部工具免费**——无分层、无许可。Omnilimb 向智能体注册以下结构化 JSON 工具:
 
 | 工具 | 作用 |
 |------|------|
@@ -70,10 +70,28 @@ Omnilimb 向智能体注册以下结构化 JSON 工具:
 | `claw_runtime` | 快速运行 python / node / bash / ruby / go 片段 |
 | `claw_skill_list` | 列出本机已安装技能及其来源 |
 | `claw_skill_runs` | 已安装技能的运行历史(诊断) |
+| `claw_skill_to_hermes` | 把已安装技能转换成原生 Hermes 技能(确定性 / AI 策展) |
+| `claw_skill_learn` | 从**任意来源**(路径 / URL / 粘贴文本)蒸馏原生 Hermes 技能(开放进料版 `/learn`) |
+| `claw_pack_list` / `claw_pack_install` | 浏览并安装精选、经审核的技能包 |
+| `claw_skill_update` | 重新解析并重装过期的市场技能 |
 
 <p align="center">
   <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/tools-zh.svg" alt="Omnilimb 的八个工具与可选仪表盘 UI" width="100%" />
 </p>
+
+## 转换与学习 —— 把任何东西变成原生 Hermes 技能
+
+两个免费工具让你从「找到技能」一步到「Hermes 原生拥有它」:
+
+- **`claw_skill_to_hermes`** 把已安装的市场技能转换成原生 Hermes 技能,写入
+  `<HERMES_HOME>/skills/<name>/`。可选 `deterministic`(纯离线、可复现)或
+  `ai_curated`(用配置的 OpenAI 兼容模型重写文档,失败自动回退确定性)。
+- **`claw_skill_learn`** 把进料拓宽到**任意来源**——本地路径、URL、粘贴的文本/
+  笔记——并据此撰写原生技能。这就是开放进料版的 `/learn`。
+
+两者都走结构**校验循环**、**事务写入**、且**幂等**(来源没变重复运行是空操作,
+按来源哈希匹配)。产物落在 `<HERMES_HOME>/skills/<name>/`,像任何原生技能一样加载。
+可在仪表盘 **技能管家 → 学习技能** 表单里用,或直接对智能体说*「学习 <来源>」*。
 
 ## 快速开始
 
@@ -138,15 +156,19 @@ python scripts/demo.py menu                    # 交互式
 
 ## 仪表盘 UI(可选)
 
-`dashboard/` 内含一个零依赖的 Web UI,用于 Hermes 仪表盘。启用插件并重启
-`hermes dashboard` 后,会在 *技能* 之后出现一个 **Omnilimb** 标签页:
+`dashboard/` 内含一个零依赖的 Web UI(已按 v0.17.0 插件 SDK 重建;中英文双语)。
+启用插件并重启 `hermes dashboard` 后,会在 *技能* 之后出现一个 **Omnilimb** 标签页:
 
-- **Search** —— 跨市场发现(榜单、分类)+ 单技能体检评分。
-- **Installed** —— 查看/编辑 `SKILL.md`、运行、冒烟测试、管理凭据、就绪检查、
-  导入/导出、卸载。
-- **Favorites** —— 收藏的技能。
-- **Audit** —— 可选的 JSONL 审计日志。
-- **Settings** —— 后端 / 市场 / 缓存 / 路径 + 诊断面板。
+- **搜索** —— 跨市场发现,外加**发现**模式(推荐 / 上升 / 热门 / 最新 榜单 + 分类
+  筛选)和单技能体检评分。
+- **已安装** —— 每个技能可展开详情:体检评分、就绪检查(命令 + API Key)、凭据、
+  `SKILL.md` 查看/编辑、冒烟测试、更新徽标、导入/导出。
+- **已转换** —— 转换成原生 Hermes 的技能(前置元数据查看 + 受保护卸载)。
+- **收藏** —— 收藏的技能。
+- **审计** —— 可选的 JSONL 审计日志。
+- **技能管家** —— 内嵌实时 Hermes 终端、一个确定性(不调大模型)的技能管家
+  (体检 / 推荐 / 诊断 / 扫审计),以及一个**从任意来源学习**的表单。
+- **设置** —— 后端 / 市场 / 沙箱 / 缓存 / 路径,底部带紧凑概览。
 
 UI 会自动跟随当前仪表盘的主题与语言。
 
@@ -204,13 +226,14 @@ pytest -q
 架构规则(插件从不导入或修改 Hermes 核心,每个处理函数返回 JSON 且从不抛异常)、
 以及如何添加市场或后端,见 [`CONTRIBUTING.md`](https://github.com/seanyang1983/omnilimb/blob/main/CONTRIBUTING.md)。
 
-## 许可与版本
+## 许可
 
-> **当前为早期测试 / 社区版,授权协议为 MIT,可自由使用。未来稳定版将采用
-> AGPLv3 + 商业授权双许可,请注意规划。**
+> **开放 1.0 —— 每个工具和仪表盘功能都免费,采用 MIT。** 没有付费层,无需购买
+> 许可。(可选的 Ed25519 许可机制保留但休眠,仅当下游构建显式设置
+> `OMNILIMB_ENFORCE_LICENSE=1` 时才会重新启用。)
 
-本仓库只包含**免费社区版**,在本地查找、安装、运行和管理 OpenClaw / ClawHub
-技能这件事上功能完整。商业/Pro 能力(技能 → 原生 Hermes 转换、AI 策展、精选包、
-自动更新、助手控制台)**不属于**本版本,计划在未来 Pro 版本以单独协议发布。
+本仓库即完整版:技能发现 / 安装 / 运行 / 沙箱 / 浏览器 / 运行时,**外加**技能 →
+原生 Hermes 转换(确定性 + AI 策展)、开放进料 `claw_skill_learn`、精选包、
+自动更新,以及完整仪表盘(含技能管家控制台)。
 
 MIT —— 见 [`LICENSE`](https://github.com/seanyang1983/omnilimb/blob/main/LICENSE)。与 OpenClaw / ClawHub 无官方关联。
