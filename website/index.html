@@ -68,12 +68,24 @@
   .shots-track::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
   .shot{flex:0 0 100%;scroll-snap-align:center;margin:0}
   @media(min-width:760px){.shot{flex-basis:calc(50% - 7px)}}
-  .shot img{width:100%;aspect-ratio:1440/880;object-fit:cover;border:1px solid var(--line);border-radius:12px;display:block}
+  .shot img{width:100%;aspect-ratio:1440/880;object-fit:cover;border:1px solid var(--line);border-radius:12px;display:block;cursor:zoom-in;transition:transform .15s,border-color .15s}
+  .shot img:hover{transform:translateY(-2px);border-color:var(--brand2)}
   .shot figcaption{color:var(--muted);font-size:13px;margin-top:8px;text-align:center}
   .shots-nav{display:flex;justify-content:center;gap:12px;margin-top:12px}
   .shots-nav button{background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:999px;width:42px;height:42px;cursor:pointer;font-size:20px;line-height:1}
   .shots-nav button:hover{border-color:var(--brand2);transform:translateY(-1px)}
   .diagram{display:block;width:100%;max-width:1000px;margin:20px auto 6px;border:1px solid var(--line);border-radius:14px}
+  .learn-hl{margin:26px 0 8px;background:linear-gradient(120deg,#0e1f1b,#141824);border:1px solid var(--brand2);border-radius:var(--radius);padding:22px 24px}
+  .learn-hl .tag{display:inline-block;font-size:12px;letter-spacing:.4px;padding:4px 11px;border-radius:999px;background:#0c2a25;border:1px solid #2c4a44;color:var(--brand2);margin-bottom:10px}
+  .learn-hl h3{margin:0 0 8px;font-size:21px}
+  .learn-hl p{margin:0 0 12px;color:var(--muted);font-size:15px}
+  .learn-hl code{background:#0a0d15;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--brand2);font-size:14px;white-space:nowrap}
+  .learn-hl .cmds{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .lightbox{position:fixed;inset:0;background:rgba(4,6,12,.93);display:none;align-items:center;justify-content:center;z-index:1000;padding:24px;cursor:zoom-out}
+  .lightbox.open{display:flex}
+  .lightbox img{max-width:96vw;max-height:92vh;border:1px solid var(--line);border-radius:12px;box-shadow:0 24px 70px rgba(0,0,0,.65)}
+  .lightbox-close{position:fixed;top:16px;right:24px;font-size:36px;color:#fff;background:transparent;border:0;cursor:pointer;line-height:1}
+  .lightbox-cap{position:fixed;bottom:20px;left:0;right:0;text-align:center;color:var(--muted);font-size:14px;padding:0 24px}
 </style>
 </head>
 <body>
@@ -102,8 +114,18 @@
     <pre class="hero-pre">pip install omnilimb</pre>
   </section>
 
+  <section class="learn-hl">
+    <span class="tag" data-t="lhTag">New in 1.0 · supports Hermes Agent v0.17.0</span>
+    <h3 data-t="lhTitle">学习技能 — the visual evolution of /learn</h3>
+    <p data-t="lhBody">Point Omnilimb at a local path, a URL, or pasted text in the dashboard — or just tell your agent in chat. It distills, validates and writes a native Hermes skill for you, behind the same structural validation loop.</p>
+    <div class="cmds">
+      <code data-t="lhCmd1">learn https://example.com/guide</code>
+      <code data-t="lhCmd2">学习 XXXX</code>
+    </div>
+  </section>
+
   <h2 class="section-title" data-t="whatTitle">The brain has Omnilimb; you keep the brain</h2>
-  <p class="section-sub" data-t="whatSub">Hermes is the brain. Omnilimb is the deterministic execution substrate — it never calls a model itself on the execution path, and adds no extra LLM tokens. Compatible with OpenClaw &amp; ClawHub; not affiliated with them.</p>
+  <p class="section-sub" data-t="whatSub">Hermes is the brain. Omnilimb is the deterministic execution substrate — it never calls a model itself on the execution path, and adds no extra LLM tokens. Built for the latest Hermes Agent v0.17.0. Compatible with OpenClaw &amp; ClawHub; not affiliated with them.</p>
   <img class="diagram" data-en="assets/architecture.svg" data-zh="assets/architecture-zh.svg" src="assets/architecture.svg" alt="How Omnilimb fits: Hermes brain → Omnilimb deterministic tools → skills/sandbox/browser/runtime" loading="lazy" />
 
   <h2 class="section-title" id="features" data-t="featTitle">What it does</h2>
@@ -166,17 +188,28 @@ hermes plugins enable omnilimb</pre>
   </footer>
 </div>
 
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Screenshot preview">
+  <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close">×</button>
+  <img id="lightboxImg" src="" alt="" />
+  <div class="lightbox-cap" id="lightboxCap"></div>
+</div>
+
 <script>
 (function(){
   var STR = {
     en: {
       navFeatures:"Features", navStart:"Get started",
       badge:"Free & open source · MIT · v1.0 — all features free",
+      lhTag:"New in 1.0 · supports Hermes Agent v0.17.0",
+      lhTitle:"Learn skill — the visual evolution of /learn",
+      lhBody:"Point Omnilimb at a local path, a URL, or pasted text in the dashboard — or just tell your agent in chat. It distills, validates and writes a native Hermes skill for you, behind the same structural validation loop.",
+      lhCmd1:"learn https://example.com/guide",
+      lhCmd2:"learn XXXX (学习 XXXX)",
       heroTitle:"Give your Hermes agent hands & feet.",
       heroSub:"Omnilimb runs OpenClaw / ClawHub community skills, an isolated sandbox, a Playwright browser and multi-language runtimes as deterministic structured-JSON tools the agent calls directly — zero extra LLM tokens on the execution path.",
       ctaGithub:"Get it on GitHub", ctaFeatures:"See what it does",
       whatTitle:"Hermes is the brain. Omnilimb is the hands & feet.",
-      whatSub:"Omnilimb is the deterministic execution substrate — it never calls a model itself on the execution path, and adds no extra LLM tokens. In 1.0 it also converts skills to native Hermes skills and learns new ones from a path, URL or text. Compatible with OpenClaw & ClawHub; not affiliated with them.",
+      whatSub:"Omnilimb is the deterministic execution substrate — it never calls a model itself on the execution path, and adds no extra LLM tokens. Built for the latest Hermes Agent v0.17.0. In 1.0 it also converts skills to native Hermes skills and learns new ones from a path, URL or text. Compatible with OpenClaw & ClawHub; not affiliated with them.",
       featTitle:"What it does", featSub:"A small set of structured-JSON tools your agent can call directly.",
       f1t:"Find & install skills", f1d:"Search the ClawHub / SkillHub registries and install skills by slug, git repo, or local path — with verification.",
       f2t:"Run deterministically", f2d:"Execute a skill's script entrypoint with retry and rollback — no second AI loop, no inference overhead.",
@@ -206,11 +239,16 @@ hermes plugins enable omnilimb</pre>
     zh: {
       navFeatures:"功能", navStart:"快速开始",
       badge:"免费 · 开源 · MIT · v1.0 全功能免费",
+      lhTag:"1.0 新功能 · 支持最新 Hermes Agent v0.17.0",
+      lhTitle:"学习技能 —— 最新 /learn 的可视化升级",
+      lhBody:"在仪表盘里给 Omnilimb 指一个本地路径、一个 URL 或粘贴一段文本 —— 或者直接在对话里告诉智能体。它会通过同一套结构校验循环,为你蒸馏、校验并写入一个原生 Hermes 技能。",
+      lhCmd1:"learn https://example.com/guide",
+      lhCmd2:"学习 XXXX",
       heroTitle:"给你的 Hermes 智能体装上手和脚。",
       heroSub:"Omnilimb 把 OpenClaw / ClawHub 社区技能、隔离沙箱、Playwright 浏览器和多语言运行时，变成智能体可直接调用的、确定性的结构化 JSON 工具 —— 执行路径零额外 LLM token。",
       ctaGithub:"前往 GitHub 获取", ctaFeatures:"看看它能做什么",
       whatTitle:"Hermes 是大脑，Omnilimb 是手和脚。",
-      whatSub:"Omnilimb 是确定性的执行底座 —— 执行路径上从不自己调用模型，不额外消耗 LLM token。1.0 还能把技能转换成原生 Hermes 技能，并从路径、URL 或文本学习新技能。兼容 OpenClaw 与 ClawHub，但与其无官方关联。",
+      whatSub:"Omnilimb 是确定性的执行底座 —— 执行路径上从不自己调用模型，不额外消耗 LLM token。专为最新的 Hermes Agent v0.17.0 打造。1.0 还能把技能转换成原生 Hermes 技能，并从路径、URL 或文本学习新技能。兼容 OpenClaw 与 ClawHub，但与其无官方关联。",
       featTitle:"它能做什么", featSub:"一组智能体可直接调用的结构化 JSON 工具。",
       f1t:"查找并安装技能", f1d:"搜索 ClawHub / SkillHub 市场，按 slug、git 仓库或本地路径安装技能，并做校验。",
       f2t:"确定性执行", f2d:"运行技能脚本入口，带重试与回滚 —— 不跑第二层 AI、零推理开销。",
@@ -278,6 +316,30 @@ hermes plugins enable omnilimb</pre>
     var p = document.getElementById("shotsPrev"), n = document.getElementById("shotsNext");
     if (p) p.addEventListener("click", function(){ step(-1); });
     if (n) n.addEventListener("click", function(){ step(1); });
+  })();
+  (function(){
+    var lb = document.getElementById("lightbox");
+    var lbImg = document.getElementById("lightboxImg");
+    var lbCap = document.getElementById("lightboxCap");
+    var lbClose = document.getElementById("lightboxClose");
+    if (!lb || !lbImg) return;
+    function open(src, alt, cap){
+      lbImg.setAttribute("src", src);
+      lbImg.setAttribute("alt", alt || "");
+      if (lbCap) lbCap.textContent = cap || "";
+      lb.classList.add("open");
+    }
+    function close(){ lb.classList.remove("open"); lbImg.setAttribute("src", ""); }
+    document.querySelectorAll(".shot img").forEach(function(im){
+      im.addEventListener("click", function(){
+        var fig = im.closest(".shot");
+        var cap = fig ? (fig.querySelector("figcaption") || {}).textContent : "";
+        open(im.currentSrc || im.src, im.getAttribute("alt"), cap);
+      });
+    });
+    lb.addEventListener("click", function(e){ if (e.target !== lbClose) close(); });
+    if (lbClose) lbClose.addEventListener("click", close);
+    document.addEventListener("keydown", function(e){ if (e.key === "Escape") close(); });
   })();
 })();
 </script>
