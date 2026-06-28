@@ -590,6 +590,28 @@ def convert(body: dict) -> dict:
         return {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
 
 
+@router.post("/update")
+def update(body: dict) -> dict:
+    """Update an installed skill to its latest upstream version — thin-wrap the
+    ``claw_skill_update`` tool. Forwards slug/all; parses JSON via ``_loads``.
+    Free in 1.0. Never raises.
+    """
+    err = _guard()
+    if err:
+        return err
+    try:
+        args: dict = {}
+        for k in ("slug", "all"):
+            if k in (body or {}):
+                args[k] = body[k]
+        result = _loads(tools.claw_skill_update(args))
+        if _is_pro_gate(result):
+            result["pro_required"] = True
+        return result
+    except Exception as exc:
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"}
+
+
 @router.post("/learn")
 def learn(body: dict) -> dict:
     """Open-ended skill distillation: thin-wrap the ``claw_skill_learn`` tool.

@@ -42,6 +42,7 @@
       scoreTitle: "Skill health check", scoreRun: "Check", scoreAll: "Health-check all", scoreAllRun: "Checking…", alsoSearched: "Related terms also searched", scoreCaps: "Capabilities", recoYes: "Recommended", recoCaution: "Use with caution", recoNo: "Not recommended",
       updateAvail: "Update available",
       toHermes: "\u2192 Hermes", converting: "Converting…", toHermesHint: "Convert this skill into a native Hermes skill",
+      doUpdate: "Update", updatingNow: "Updating…",
       tabSettings: "Settings", settingsTitle: "Settings", fieldAudit: "Audit logging", fieldCache: "Local cache", fieldTtl: "Discover cache TTL (s)", needRestart: "some changes apply on restart", diagTitle: "Diagnostics",
       
       workspaceHint: "Where skills are installed. Leave empty to use the default (~/.openclaw/workspace).",
@@ -86,6 +87,7 @@
       scoreTitle: "技能体检", scoreRun: "体检", scoreAll: "全部体检", scoreAllRun: "体检中…", alsoSearched: "已自动包含相关词的搜索结果", scoreCaps: "能力", recoYes: "推荐安装/使用", recoCaution: "谨慎", recoNo: "不推荐",
       updateAvail: "有可用更新",
       toHermes: "\u2192 Hermes", converting: "转换中…", toHermesHint: "把这个技能转换成原生 Hermes 技能",
+      doUpdate: "更新", updatingNow: "更新中…",
       tabSettings: "设置", settingsTitle: "设置", fieldAudit: "审计日志记录", fieldCache: "本地缓存", fieldTtl: "发现页缓存有效期(秒)", needRestart: "部分改动重启后生效", diagTitle: "诊断",
       
       workspaceHint: "技能的安装目录；留空使用默认（~/.openclaw/workspace）。",
@@ -847,8 +849,8 @@
           [h("button", { key: "_all", className: category[0] === "" ? "active" : "", onClick: function () { onCategory(""); } }, t("catAll"))].concat(
             cats[0].map(function (c) { return h("button", { key: c, className: category[0] === c ? "active" : "", onClick: function () { onCategory(c); } }, catLabel(c, loc)); }))) : null,
         view[0] === "discover" ? renderDiscover() : null,
-        (view[0] === "discover" && history[0] && history[0].length) ? h("div", { className: "ex-pills", style: { marginTop: ".5rem" } },
-          [h("span", { key: "_h", className: "ex-meta", style: { marginRight: ".3rem" } }, t("recentSearch") + ":")].concat(
+        (view[0] === "discover" && history[0] && history[0].length) ? h("div", { className: "ex-pills", style: { marginTop: ".5rem", display: "flex", alignItems: "center", flexWrap: "wrap", gap: ".3rem" } },
+          [h("span", { key: "_h", className: "ex-meta" }, t("recentSearch") + ":")].concat(
             history[0].slice(0, 8).map(function (hq, i) {
               return h("button", { key: i, onClick: function () { q[1](hq); doSearch({ q: hq, page: 1 }); } }, hq);
             }))) : null,
@@ -902,6 +904,7 @@
       ]),
       h("div", { className: "ex-mini-foot" }, [
         h("button", { key: "v", className: "ex-btn ex-btn-primary", onClick: function (e) { e.stopPropagation(); onView(sk); } }, t("viewDetail")),
+        canUpd ? h("button", { key: "up", className: "ex-btn ex-btn-solid", onClick: function (e) { e.stopPropagation(); if (!props.updating) props.onUpdate(sk); }, disabled: props.updating, title: t("updateAvail") }, props.updating ? t("updatingNow") : t("doUpdate")) : null,
         h("button", { key: "x", className: "ex-btn", onClick: function (e) { e.stopPropagation(); if (!props.converting) props.onConvert(sk); }, disabled: props.converting, title: t("toHermesHint") }, props.converting ? t("converting") : t("toHermes")),
         h("button", { key: "u", className: "ex-btn ex-btn-danger ex-spacer", onClick: function (e) { e.stopPropagation(); if (!busy) onUninstall(sk); }, disabled: busy }, busy ? t("uninstalling") : t("uninstall")),
       ]));
@@ -1162,6 +1165,7 @@
     var selected = useState("");        // slug being viewed; "" = grid
     var uninstalling = useState({});    // slug -> bool
     var converting = useState({});      // slug -> bool (→ Hermes convert)
+    var updating = useState({});        // slug -> bool (update to latest)
     var updates = useState({});         // slug -> {current, latest, update_available}
     function load() {
       d[1](null);
@@ -1179,6 +1183,18 @@
     useEffect(function () { load(); }, []);
     function setUn(slug, v) { uninstalling[1](function (prev) { var c = Object.assign({}, prev); c[slug] = v; return c; }); }
     function setCv(slug, v) { converting[1](function (prev) { var c = Object.assign({}, prev); c[slug] = v; return c; }); }
+    function setUp(slug, v) { updating[1](function (prev) { var c = Object.assign({}, prev); c[slug] = v; return c; }); }
+    function doUpdate(sk) {
+      var slug = sk.slug || sk.name;
+      setUp(slug, true);
+      post("/update", { slug: slug })
+        .then(function (r) {
+          if (r && r.ok) { load(); }
+          else { window.alert((r && r.error) || "update failed"); }
+        })
+        .catch(function (e) { window.alert(String(e)); })
+        .finally(function () { setUp(slug, false); });
+    }
     function doConvert(sk) {
       var slug = sk.slug || sk.name;
       setCv(slug, true);
@@ -1248,6 +1264,7 @@
               return h(InstalledCard, { key: i, sk: sk, t: t, busy: !!uninstalling[0][slug], upd: updates[0][slug],
                 onView: function (s) { selected[1](s.slug || s.name); },
                 converting: !!converting[0][slug], onConvert: doConvert,
+                updating: !!updating[0][slug], onUpdate: doUpdate,
                 onUninstall: doUninstall });
             })))),
       (v && v.ok) ? h("div", { className: "ex-meta", style: { marginTop: ".7rem" } }, t("workspace") + ": " + (v.workspace || "")) : null,
@@ -1606,7 +1623,7 @@
         e("div", { className: "min-w-[160px] flex-1" },
           input({ value: name, placeholder: L.namePh, onChange: function (ev) { setName(ev.target.value); } }))),
       textarea({ rows: 6, value: src, placeholder: L.srcPh, onChange: function (ev) { setSrc(ev.target.value); } }),
-      e("div", null, e(Button, { onClick: run, disabled: loading || !src.trim() }, loading ? L.learning : L.learnBtn)),
+      e("div", null, e("button", { className: "ex-btn ex-btn-primary", onClick: run, disabled: loading || !src.trim() }, loading ? L.learning : L.learnBtn)),
       res ? (res.ok
         ? e(Card, null, e(CardContent, { className: "p-3 text-sm" },
             e("div", { className: "font-medium text-green-400" }, "\u2713 " + (res.status || "learned") + ": " + (res.name || "")),
@@ -1751,7 +1768,7 @@
           input({ value: q, placeholder: L.promptPh,
             onChange: function (ev) { setQ(ev.target.value); },
             onKeyDown: function (ev) { if (ev.key === "Enter" && !ev.shiftKey) { ev.preventDefault(); send(); } } })),
-        e(Button, { onClick: send, disabled: sending || !q.trim() }, sending ? L.thinking : L.send)),
+        e("button", { className: "ex-btn ex-btn-primary", onClick: send, disabled: sending || !q.trim() }, sending ? L.thinking : L.send)),
       resultPane));
     var subs = [["butler", L.stewardBoxTitle], ["learn", L.learnBtn]];
     return e("div", { className: "space-y-4" },
@@ -1769,12 +1786,12 @@
   function OmnilimbPanel() {
     var t = useTr();
     var L = useL();
-    var tab = useState("search");
+    var tab = useState("steward");
     // User-facing tabs. Audit is a FREE feature (everyone can view). "Runtime"
     // (a developer code bench) stays hidden from the UI — re-enable by adding
     // ["runtime", t("tabRuntime")] back to this list.
-    var tabs = [["search", t("tabSearch")], ["installed", t("tabInstalled")], ["converted", L.tabConverted]];
-    tabs = tabs.concat([["favorites", t("tabFavorites")], ["audit", t("tabAudit")], ["steward", L.tabSteward], ["settings", t("tabSettings")]]);
+    var tabs = [["steward", L.tabSteward], ["search", t("tabSearch")], ["installed", t("tabInstalled")], ["converted", L.tabConverted]];
+    tabs = tabs.concat([["favorites", t("tabFavorites")], ["audit", t("tabAudit")], ["settings", t("tabSettings")]]);
     // Listen for cross-component tab-navigation requests and switch tabs.
     useEffect(function () {
       var on = function (e) { var dst = e && e.detail; if (dst) tab[1](dst); };
