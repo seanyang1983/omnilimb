@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/banner.svg" alt="Omnilimb — give your Hermes agent hands & feet" width="100%" />
+  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/banner.svg" alt="Omnilimb — give your Hermes agent hands & feet" width="100%" />
 </p>
 
 <p align="center">
@@ -60,7 +60,7 @@ pip install omnilimb        # then: hermes plugins enable omnilimb
   GitHub index — or add your own adapter in a few lines.
 
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/architecture.svg" alt="How Omnilimb fits: Hermes brain → Omnilimb deterministic tools → skills/sandbox/browser/runtime" width="100%" />
+  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/architecture.svg" alt="How Omnilimb fits: Hermes brain → Omnilimb deterministic tools → skills/sandbox/browser/runtime" width="100%" />
 </p>
 
 ## The tools
@@ -84,7 +84,7 @@ structured-JSON tools the agent can call:
 | `claw_skill_update` | Re-resolve + reinstall stale market skills |
 
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/tools.svg" alt="The structured-JSON tools the agent calls directly" width="100%" />
+  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/tools.svg" alt="The structured-JSON tools the agent calls directly" width="100%" />
 </p>
 
 ## Convert & learn — turn anything into a native Hermes skill
@@ -208,15 +208,15 @@ management, the **学习技能 (Learn)** form, and your converted + learned libr
 
 <table>
 <tr>
-<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-steward.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-steward.jpg" alt="Omnilimb skill butler (技能管家)"/></a><br/><sub><b>技能管家 (Skill butler)</b> — a deterministic, no-LLM butler: health-check, recommend, diagnose, plus Learn.</sub></td>
-<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-search.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-search.jpg" alt="Omnilimb market search with one-click health-check all"/></a><br/><sub><b>Search</b> — one-click “Health-check all” scores every result (0–100 + grade) before you install.</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-steward.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-steward.jpg" alt="Omnilimb skill butler (技能管家)"/></a><br/><sub><b>技能管家 (Skill butler)</b> — a deterministic, no-LLM butler: health-check, recommend, diagnose, plus Learn.</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-search.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-search.jpg" alt="Omnilimb market search with one-click health-check all"/></a><br/><sub><b>Search</b> — one-click “Health-check all” scores every result (0–100 + grade) before you install.</sub></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-installed.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-installed.jpg" alt="Omnilimb installed-skills management"/></a><br/><sub><b>Installed</b> — health, credentials, smoke-test, Update &amp; → Hermes convert.</sub></td>
-<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-learn.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-learn.jpg" alt="Omnilimb learn a native Hermes skill from any source"/></a><br/><sub><b>学习技能 (Learn)</b> — distill a native Hermes skill from a path, URL or text.</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-installed.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-installed.jpg" alt="Omnilimb installed-skills management"/></a><br/><sub><b>Installed</b> — health, credentials, smoke-test, Update &amp; → Hermes convert.</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-learn.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-learn.jpg" alt="Omnilimb learn a native Hermes skill from any source"/></a><br/><sub><b>学习技能 (Learn)</b> — distill a native Hermes skill from a path, URL or text.</sub></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-myskills.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-myskills.jpg" alt="Omnilimb My skills — converted and learned native skills in one library"/></a><br/><sub><b>My skills (我的技能)</b> — converted &amp; learned native skills in one library.</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-myskills.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-myskills.jpg" alt="Omnilimb My skills — converted and learned native skills in one library"/></a><br/><sub><b>My skills (我的技能)</b> — converted &amp; learned native skills in one library.</sub></td>
 <td width="50%" valign="top"></td>
 </tr>
 </table>

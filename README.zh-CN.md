@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/banner-zh.svg" alt="Omnilimb — 给你的 Hermes 智能体装上手和脚" width="100%" />
+  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/banner-zh.svg" alt="Omnilimb — 给你的 Hermes 智能体装上手和脚" width="100%" />
 </p>
 
 <p align="center">
@@ -57,7 +57,7 @@ pip install omnilimb        # 然后:hermes plugins enable omnilimb
   几行代码加一个你自己的适配器。
 
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/architecture-zh.svg" alt="Omnilimb 架构:Hermes 大脑 → Omnilimb 确定性工具 → 技能/沙箱/浏览器/运行时" width="100%" />
+  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/architecture-zh.svg" alt="Omnilimb 架构:Hermes 大脑 → Omnilimb 确定性工具 → 技能/沙箱/浏览器/运行时" width="100%" />
 </p>
 
 ## 工具一览
@@ -80,7 +80,7 @@ pip install omnilimb        # 然后:hermes plugins enable omnilimb
 | `claw_skill_update` | 重新解析并重装过期的市场技能 |
 
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/tools-zh.svg" alt="Omnilimb 的结构化 JSON 工具,由智能体直接调用" width="100%" />
+  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/tools-zh.svg" alt="Omnilimb 的结构化 JSON 工具,由智能体直接调用" width="100%" />
 </p>
 
 ## 转换与学习 —— 把任何东西变成原生 Hermes 技能
@@ -189,15 +189,15 @@ UI 会自动跟随当前仪表盘的主题与语言。
 
 <table>
 <tr>
-<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-steward-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-steward-zh.jpg" alt="技能管家"/></a><br/><sub><b>技能管家</b> —— 确定性(不调大模型)的管家:体检、推荐、诊断,外加学习技能。</sub></td>
-<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-search-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-search-zh.jpg" alt="跨市场搜索与一键全部体检"/></a><br/><sub><b>搜索</b> —— 一键「全部体检」,安装前给每条结果 0–100 分+评级。</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-steward-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-steward-zh.jpg" alt="技能管家"/></a><br/><sub><b>技能管家</b> —— 确定性(不调大模型)的管家:体检、推荐、诊断,外加学习技能。</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-search-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-search-zh.jpg" alt="跨市场搜索与一键全部体检"/></a><br/><sub><b>搜索</b> —— 一键「全部体检」,安装前给每条结果 0–100 分+评级。</sub></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-installed-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-installed-zh.jpg" alt="已安装技能管理"/></a><br/><sub><b>已安装</b> —— 体检、凭据、冒烟测试,外加「更新」和「→ Hermes 转换」。</sub></td>
-<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-learn-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-learn-zh.jpg" alt="从任意来源学习原生 Hermes 技能"/></a><br/><sub><b>学习技能</b> —— 从路径、URL 或粘贴文本蒸馏出原生 Hermes 技能。</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-installed-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-installed-zh.jpg" alt="已安装技能管理"/></a><br/><sub><b>已安装</b> —— 体检、凭据、冒烟测试,外加「更新」和「→ Hermes 转换」。</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-learn-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-learn-zh.jpg" alt="从任意来源学习原生 Hermes 技能"/></a><br/><sub><b>学习技能</b> —— 从路径、URL 或粘贴文本蒸馏出原生 Hermes 技能。</sub></td>
 </tr>
 <tr>
-<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-myskills-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-myskills-zh.jpg" alt="我的技能 —— 转换与学习的原生技能统一陈列"/></a><br/><sub><b>我的技能</b> —— 转换与学习产出的原生技能统一陈列(带「转换」「学习」来源标签)。</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-myskills-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-myskills-zh.jpg" alt="我的技能 —— 转换与学习的原生技能统一陈列"/></a><br/><sub><b>我的技能</b> —— 转换与学习产出的原生技能统一陈列(带「转换」「学习」来源标签)。</sub></td>
 <td width="50%" valign="top"></td>
 </tr>
 </table>
