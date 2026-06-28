@@ -48,25 +48,46 @@ pip install omnilimb        # then: hermes plugins enable omnilimb
 
 ## Why Omnilimb
 
-- ⚡ **Zero token overhead.** The execution path never calls a model. The agent
-  decides *once*; Omnilimb does the work deterministically and hands back JSON.
-- 🧰 **A whole toolbox, one small surface.** Discovery, install, run, sandbox,
-  browser, runtimes — plus skill → native Hermes conversion and open-ended
-  learning — with no sprawling API to learn.
-- 🛡️ **Safe by default.** Third-party skills run in a Docker sandbox with the
-  network off and automatic rollback. Path-traversal and zip-slip guarded.
-- 🔌 **No lock-in, no phone-home.** Search talks only to the market you pick.
-  Your code, caches and audit log stay on your machine.
-- 🪶 **Runs with or without Node.** The `native` backend is pure Python; the
-  `cli` backend bridges the real `openclaw` / `clawhub` binaries for full parity.
-- 🌐 **Bring your own market.** ClawHub, SkillHub, the official China mirror, a
-  GitHub index — or add your own adapter in a few lines.
+- 💸 **Zero extra tokens.** The execution path never calls a model — the agent
+  decides *once*, Omnilimb does the work deterministically and hands back JSON.
+  Cheaper, faster, reproducible.
+- 🛡️ **Deterministic & safe.** Retry, rollback and an optional audit log; the
+  Docker sandbox runs with the network off by default. Path-traversal and
+  zip-slip guarded.
+- 🧠 **Convert & learn.** Turn any skill into a native Hermes skill — or learn a
+  new one from a single sentence.
+
+No lock-in and no phone-home (search talks only to the market you pick), runs
+**with or without Node**, and works across **multiple markets** — see
+[Pick your market](#pick-your-market) and [Pick your backend](#pick-your-backend) below.
 
 <p align="center">
   <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/architecture.svg" alt="How Omnilimb fits: Hermes brain → Omnilimb deterministic tools → skills/sandbox/browser/runtime" width="100%" />
 </p>
 
-## The tools
+## What it does
+
+A small set of structured-JSON tools your agent calls directly — grouped into
+three jobs:
+
+**🧩 Run community skills** — find & install by slug / git repo / local path
+(verified), run a skill's entrypoint deterministically (retry + rollback, no
+second AI loop), discover across markets with a per-skill **health check (体检)**,
+and manage everything installed (view/edit, smoke-test, import/export). Works
+**with or without Node** via two backends.
+
+**🛡️ Execute safely** — an isolated **Docker sandbox** (network off by default,
+instant rollback), **Playwright** browser automation via a structured action
+list, multi-language runtimes (python / node / bash / ruby / go), and an
+optional JSONL **audit log**.
+
+**✨ Convert & learn · new in 1.0** — convert an installed market skill into a
+native Hermes skill (deterministic or AI-curated), or **Learn** one from any
+source (a path, URL, or pasted text). A deterministic, no-LLM **Skill butler
+(技能管家)** health-checks, recommends and diagnoses your skills, with Learn
+built in.
+
+### Every tool — free in 1.0
 
 In **1.0 every tool is free** — no tiers, no license. Omnilimb registers these
 structured-JSON tools the agent can call:
