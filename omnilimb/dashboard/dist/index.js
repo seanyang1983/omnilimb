@@ -287,9 +287,10 @@
   }
   var XSTR = {
     en: {
-      tabConverted: "Converted", tabSteward: "Skill butler",
-      confirmRemove: "Remove this converted skill?", loadConverted: "loading converted",
-      noConverted: "No converted skills yet. Convert one from Installed, or use Learn.", remove: "Remove",
+      tabConverted: "My skills", tabSteward: "Skill butler",
+      confirmRemove: "Remove this skill?", loadConverted: "loading skills",
+      noConverted: "No generated skills yet. Convert one from Installed, or learn one in Skill butler.", remove: "Remove",
+      originConverted: "converted", originLearned: "learned",
       learnDesc: "Distill a native Hermes skill from any source — a local path, a URL, or pasted text. The open-ended /learn equivalent.",
       autoDetect: "auto-detect", typePath: "path", typeUrl: "url", typeText: "text",
       modeAi: "ai_curated (model)", modeDet: "deterministic (offline)",
@@ -305,9 +306,10 @@
       termUnavail: "Terminal failed to load — try refreshing the page.",
     },
     zh: {
-      tabConverted: "已转换", tabSteward: "技能管家",
-      confirmRemove: "移除这个已转换技能？", loadConverted: "加载已转换",
-      noConverted: "还没有已转换技能。从「已安装」转换一个，或用「学习技能」。", remove: "移除",
+      tabConverted: "我的技能", tabSteward: "技能管家",
+      confirmRemove: "移除这个技能？", loadConverted: "加载技能",
+      noConverted: "还没有生成的技能。去「已安装」转换一个，或在「技能管家」里学习一个。", remove: "移除",
+      originConverted: "转换", originLearned: "学习",
       learnDesc: "从任意来源蒸馏出一个原生 Hermes 技能 —— 本地路径、URL 或粘贴文本。开放进料版的 /learn。",
       autoDetect: "自动识别", typePath: "路径", typeUrl: "网址", typeText: "文本",
       modeAi: "ai_curated（用模型）", modeDet: "deterministic（离线）",
@@ -1588,9 +1590,13 @@
     if (skills.length === 0) return muted(L.noConverted);
     return e("div", { className: "space-y-2" }, skills.map(function (sk, i) {
       var name = sk.name || sk.slug || ("c" + i);
+      var originLab = sk.origin === "learned" ? L.originLearned : L.originConverted;
+      var originCls = sk.origin === "learned" ? "bg-sky-500/15 text-sky-400" : "bg-green-500/15 text-green-400";
       return e(Card, { key: name }, e(CardContent, { className: "flex items-center justify-between gap-3 p-3" },
         e("div", { className: "min-w-0" },
-          e("div", { className: "truncate text-sm font-medium" }, name),
+          e("div", { className: "flex items-center gap-2" },
+            e("span", { className: "truncate text-sm font-medium" }, name),
+            e("span", { className: cn("rounded px-1.5 py-0.5 text-xs", originCls) }, originLab)),
           muted((sk.description || "").slice(0, 140), "mt-0.5 line-clamp-2")),
         e(Button, { size: "sm", variant: "destructive", onClick: function () { uninstall(name); } }, L.remove)));
     }));
@@ -1772,7 +1778,6 @@
       resultPane));
     var subs = [["butler", L.stewardBoxTitle], ["learn", L.learnBtn]];
     return e("div", { className: "space-y-4" },
-      e(HermesTerminal, null),
       e("div", { className: "space-y-3" },
         e("div", { className: "flex flex-wrap gap-1 border-b border-border pb-2" }, subs.map(function (tt) {
           var onx = tt[0] === sub;

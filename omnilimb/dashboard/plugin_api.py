@@ -650,13 +650,17 @@ def converted_skills() -> dict:
                 meta = _read_converted_frontmatter(d / "SKILL.md")   # never raises
                 md = (meta.get("metadata") or {}) if isinstance(meta, dict) else {}
                 src = md.get("omnilimb_source_slug")
-                if not src:
-                    continue                          # Req 10.2 — provenance filter
+                learn_src = md.get("omnilimb_learn_source") or md.get("omnilimb_learned_at")
+                if not src and not learn_src:
+                    continue                          # provenance filter (converted OR learned)
                 cards.append({
                     "name": meta.get("name") or d.name,
                     "description": meta.get("description") or "",
+                    "origin": "converted" if src else "learned",
                     "source_slug": src,
                     "source_version": md.get("omnilimb_source_version"),
+                    "learn_source": md.get("omnilimb_learn_source"),
+                    "learn_source_type": md.get("omnilimb_learn_source_type"),
                     "output_path": str(d),
                 })                                    # Req 10.3
         return {"ok": True, "skills": cards, "count": len(cards)}
@@ -717,11 +721,14 @@ def converted_uninstall(body: dict) -> dict:
         # PATH GUARD: must be a direct, real child of skills root (no traversal/escape).
         if d == root.resolve() or d.parent != root.resolve():
             return {"ok": False, "error": f"invalid converted skill: {name}"}
-        # Existence + PROVENANCE check: only delete omnilimb-converted skills.
+        # Existence + PROVENANCE check: only delete omnilimb-generated skills
+        # (converted from a market skill, OR learned from a source). Never an
+        # arbitrary hand-written native skill.
         meta = _read_converted_frontmatter(d / "SKILL.md")
         md = (meta.get("metadata") or {}) if isinstance(meta, dict) else {}
-        if not d.is_dir() or not (d / "SKILL.md").exists() or not md.get("omnilimb_source_slug"):
-            return {"ok": False, "error": f"converted skill not found: {name}"}
+        provenance = md.get("omnilimb_source_slug") or md.get("omnilimb_learn_source") or md.get("omnilimb_learned_at")
+        if not d.is_dir() or not (d / "SKILL.md").exists() or not provenance:
+            return {"ok": False, "error": f"skill not found: {name}"}
         import shutil
 
         try:
