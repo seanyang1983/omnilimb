@@ -55,6 +55,8 @@
   .card h3{margin:0 0 8px;font-size:17px}
   .card p{margin:0;color:var(--muted);font-size:14px}
   .ic{font-size:22px;display:block;margin-bottom:6px}
+  .card-cmd{margin-top:10px;display:flex;gap:6px;flex-wrap:wrap}
+  .card-cmd code{background:#0a0d15;border:1px solid var(--line);border-radius:6px;padding:2px 8px;color:var(--brand2);font-size:12px;white-space:nowrap}
   pre{background:#0a0d15;border:1px solid var(--line);border-radius:12px;padding:16px;overflow:auto;font-size:13px;color:#cdd6f4}
   .note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--brand2);border-radius:12px;padding:18px 20px;margin:24px 0;color:var(--muted)}
   .note b{color:var(--txt)}
@@ -76,16 +78,6 @@
   .shots-nav button{background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:999px;width:42px;height:42px;cursor:pointer;font-size:20px;line-height:1}
   .shots-nav button:hover{border-color:var(--brand2);transform:translateY(-1px)}
   .diagram{display:block;width:100%;max-width:1000px;margin:20px auto 6px;border:1px solid var(--line);border-radius:14px}
-  .learn-hl{margin:26px 0 8px;background:linear-gradient(120deg,#0e1f1b,#141824);border:1px solid var(--brand2);border-radius:var(--radius);padding:22px 24px}
-  .learn-hl .tag{display:inline-block;font-size:12px;letter-spacing:.4px;padding:4px 11px;border-radius:999px;background:#0c2a25;border:1px solid #2c4a44;color:var(--brand2);margin-bottom:10px}
-  .learn-hl h3{margin:0 0 8px;font-size:21px}
-  .learn-hl p{margin:0 0 12px;color:var(--muted);font-size:15px}
-  .learn-hl code{background:#0a0d15;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--brand2);font-size:14px;white-space:nowrap}
-  .learn-hl .cmds-lead{margin:16px 0 10px;color:var(--txt);font-size:14px;font-weight:600}
-  .learn-hl .cmds{display:flex;flex-direction:column;gap:9px}
-  .learn-hl .ex{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}
-  .learn-hl .ex .arr{color:var(--brand2)}
-  .learn-hl .ex .desc{color:var(--muted)}
   .vstrip{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:30px 0 10px}
   @media(max-width:680px){.vstrip{grid-template-columns:1fr}}
   .vcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
@@ -121,7 +113,7 @@
   <section class="hero">
     <img class="hero-banner" data-en="assets/banner.svg" data-zh="assets/banner-zh.svg" src="assets/banner.svg" alt="Omnilimb — give your Hermes agent hands &amp; feet" />
     <h1 class="visually-hidden" data-t="heroTitle">Give your Hermes agent hands &amp; feet.</h1>
-    <p class="sub" data-t="heroSub">Let your Hermes agent actually get things done — run community skills, an isolated sandbox, a browser and multi-language runtimes as deterministic tools, with zero extra LLM tokens on the execution path.</p>
+    <p class="sub" data-t="heroSub">Let your Hermes agent actually get things done — community skills, an isolated sandbox, a browser and multi-language runtimes, all as deterministic tools.</p>
     <div class="cta">
       <a class="btn primary" href="https://github.com/seanyang1983/omnilimb" target="_blank" rel="noopener" data-t="ctaGithub">Get it on GitHub</a>
       <a class="btn" href="#features" data-t="ctaFeatures">See what it does</a>
@@ -129,27 +121,16 @@
     <pre class="hero-pre">pip install omnilimb</pre>
   </section>
 
+  <h2 class="section-title" data-t="whatTitle">Hermes is the brain. Omnilimb is the hands &amp; feet.</h2>
+  <p class="section-sub" data-t="whatSub">Built for Hermes users: you keep the brain, Omnilimb is the hands &amp; feet. On the execution path it never calls a model itself — it just does the deterministic, reproducible work. Compatible with OpenClaw &amp; ClawHub; not affiliated with them.</p>
+  <img class="diagram" data-en="assets/architecture.svg" data-zh="assets/architecture-zh.svg" src="assets/architecture.svg" alt="How Omnilimb fits: Hermes brain → Omnilimb deterministic tools → skills/sandbox/browser/runtime" loading="lazy" />
+
   <section class="vstrip">
     <div class="vcard"><span class="vic">💸</span><h3 data-t="v1t">Zero extra tokens</h3><p data-t="v1d">No second model call on the execution path — cheaper, faster, reproducible.</p></div>
     <div class="vcard"><span class="vic">🛡️</span><h3 data-t="v2t">Deterministic &amp; safe</h3><p data-t="v2d">Retry, rollback and an audit log; the sandbox runs with the network off by default.</p></div>
     <div class="vcard"><span class="vic">🧠</span><h3 data-t="v3t">Convert &amp; learn</h3><p data-t="v3d">Turn any skill into a native Hermes skill — or learn a new one from a single sentence.</p></div>
   </section>
   <p class="vhook" data-t="vhook">The same task, without a second model call: Omnilimb executes deterministically — same result, very different token bill.</p>
-
-  <section class="learn-hl">
-    <span class="tag" data-t="lhTag">New in 1.0 · supports Hermes Agent v0.17.0</span>
-    <h3 data-t="lhTitle">学习技能 — the visual evolution of /learn</h3>
-    <p data-t="lhBody">Point Omnilimb at a local path, a URL, or pasted text in the dashboard — or just tell your agent in chat. It distills, validates and writes a native Hermes skill for you, behind the same structural validation loop.</p>
-    <p class="cmds-lead" data-t="lhLead">Just tell your agent in chat — or click through the dashboard:</p>
-    <div class="cmds">
-      <div class="ex"><code data-t="lhEx1c">learn https://example.com/article</code><span class="arr">→</span><span class="desc" data-t="lhEx1d">distil a native skill from this web page</span></div>
-      <div class="ex"><code data-t="lhEx2c">learn: add a watermark to a PDF</code><span class="arr">→</span><span class="desc" data-t="lhEx2d">build a skill from a one-line description</span></div>
-    </div>
-  </section>
-
-  <h2 class="section-title" data-t="whatTitle">Hermes is the brain. Omnilimb is the hands &amp; feet.</h2>
-  <p class="section-sub" data-t="whatSub">Built for Hermes users: you keep the brain, Omnilimb is the hands &amp; feet. On the execution path it never calls a model itself — it just does the deterministic, reproducible work. Compatible with OpenClaw &amp; ClawHub; not affiliated with them.</p>
-  <img class="diagram" data-en="assets/architecture.svg" data-zh="assets/architecture-zh.svg" src="assets/architecture.svg" alt="How Omnilimb fits: Hermes brain → Omnilimb deterministic tools → skills/sandbox/browser/runtime" loading="lazy" />
 
   <h2 class="section-title" id="features" data-t="featTitle">What it does</h2>
   <p class="section-sub" data-t="featSub">A small set of structured-JSON tools your agent can call directly.</p>
@@ -173,8 +154,8 @@
 
   <h3 class="fgroup" data-t="fg3">Convert &amp; learn <span class="new">· new in 1.0</span></h3>
   <div class="grid">
-    <div class="card" style="border-color:var(--brand2)"><span class="ic">✨</span><h3 data-t="f10t">Learn skill (new)</h3><p data-t="f10d">Distill a native Hermes skill from any source — a local path, a URL, or pasted text — validated and written to your Hermes skills.</p></div>
-    <div class="card" style="border-color:var(--brand2)"><span class="ic">🧠</span><h3 data-t="f11t">Skill butler 技能管家 (new)</h3><p data-t="f11d">An embedded live Hermes terminal plus a deterministic, no-LLM butler that health-checks, recommends and diagnoses your skills.</p></div>
+    <div class="card" style="border-color:var(--brand2)"><span class="ic">✨</span><h3 data-t="f10t">Learn skill (new)</h3><p data-t="f10d">Distill a native Hermes skill from any source — a local path, a URL, or pasted text — validated and written to your Hermes skills.</p><div class="card-cmd"><code>learn &lt;url&gt;</code><code>学习 XXXX</code></div></div>
+    <div class="card" style="border-color:var(--brand2)"><span class="ic">🧠</span><h3 data-t="f11t">Skill butler 技能管家 (new)</h3><p data-t="f11d">A deterministic, no-LLM butler that health-checks, recommends and diagnoses your skills — with Learn built in.</p></div>
     <div class="card" style="border-color:var(--brand2)"><span class="ic">🔄</span><h3 data-t="f12t">Convert to native skill</h3><p data-t="f12d">Turn an installed market skill into a native Hermes skill — deterministic or AI-curated, behind a structural validation loop.</p></div>
   </div>
   <img class="diagram" data-en="assets/tools.svg" data-zh="assets/tools-zh.svg" src="assets/tools.svg" alt="The structured-JSON tools the agent calls directly" loading="lazy" />
@@ -183,11 +164,11 @@
   <p class="section-sub" data-t="shotsSub">Real screenshots from the Omnilimb dashboard tab.</p>
   <div class="shots">
     <div class="shots-track" id="shotsTrack">
-      <figure class="shot"><img data-en="assets/ui-search.jpg" data-zh="assets/ui-search-zh.jpg" src="assets/ui-search.jpg" alt="Omnilimb live skill search across markets" loading="lazy" /><figcaption data-t="shot1">Discovery leaderboards across markets — recommended, rising, hot &amp; newest.</figcaption></figure>
-      <figure class="shot"><img data-en="assets/ui-healthcheck.jpg" data-zh="assets/ui-healthcheck-zh.jpg" src="assets/ui-healthcheck.jpg" alt="Omnilimb per-skill health check and score breakdown" loading="lazy" /><figcaption data-t="shot2">One-click health check (体检): a transparent 0–100 score before you install.</figcaption></figure>
-      <figure class="shot"><img data-en="assets/ui-installed.jpg" data-zh="assets/ui-installed-zh.jpg" src="assets/ui-installed.jpg" alt="Omnilimb installed-skills management" loading="lazy" /><figcaption data-t="shot3">Manage installed skills — view, smoke-test, credentials, uninstall.</figcaption></figure>
-      <figure class="shot"><img data-en="assets/ui-steward.jpg" data-zh="assets/ui-steward-zh.jpg" src="assets/ui-steward.jpg" alt="Omnilimb skill butler (技能管家) with an embedded Hermes terminal" loading="lazy" /><figcaption data-t="shot4">技能管家 — an embedded live Hermes terminal + a deterministic skill butler.</figcaption></figure>
-      <figure class="shot"><img data-en="assets/ui-learn.jpg" data-zh="assets/ui-learn-zh.jpg" src="assets/ui-learn.jpg" alt="Omnilimb learn a native Hermes skill from any source" loading="lazy" /><figcaption data-t="shot5">学习技能 — distill a native Hermes skill from a path, URL or text.</figcaption></figure>
+      <figure class="shot"><img data-en="assets/ui-steward.jpg" data-zh="assets/ui-steward-zh.jpg" src="assets/ui-steward.jpg" alt="Omnilimb skill butler (技能管家)" loading="lazy" /><figcaption data-t="shot1">技能管家 — a deterministic, no-LLM skill butler.</figcaption></figure>
+      <figure class="shot"><img data-en="assets/ui-search.jpg" data-zh="assets/ui-search-zh.jpg" src="assets/ui-search.jpg" alt="Omnilimb search across markets with one-click batch health check" loading="lazy" /><figcaption data-t="shot2">Search across markets — one-click “Health-check all” scores every result before you install.</figcaption></figure>
+      <figure class="shot"><img data-en="assets/ui-installed.jpg" data-zh="assets/ui-installed-zh.jpg" src="assets/ui-installed.jpg" alt="Omnilimb installed-skills management" loading="lazy" /><figcaption data-t="shot3">Manage installed skills — health, credentials, smoke-test, Update &amp; → Hermes convert.</figcaption></figure>
+      <figure class="shot"><img data-en="assets/ui-learn.jpg" data-zh="assets/ui-learn-zh.jpg" src="assets/ui-learn.jpg" alt="Omnilimb learn a native Hermes skill from any source" loading="lazy" /><figcaption data-t="shot4">学习技能 — distill a native Hermes skill from a path, URL or text.</figcaption></figure>
+      <figure class="shot"><img data-en="assets/ui-myskills.jpg" data-zh="assets/ui-myskills-zh.jpg" src="assets/ui-myskills.jpg" alt="Omnilimb My skills — converted and learned native skills in one library" loading="lazy" /><figcaption data-t="shot5">我的技能 — converted &amp; learned native skills in one library.</figcaption></figure>
     </div>
     <div class="shots-nav">
       <button type="button" id="shotsPrev" aria-label="Previous screenshot">‹</button>
@@ -238,16 +219,8 @@ hermes plugins enable omnilimb</pre>
       v3t:"Convert & learn", v3d:"Turn any skill into a native Hermes skill — or learn a new one from a single sentence.",
       vhook:"The same task, without a second model call: Omnilimb executes deterministically — same result, very different token bill.",
       fg1:"Run community skills", fg2:"Execute safely", fg3:"Convert & learn · new in 1.0",
-      lhTag:"New in 1.0 · supports Hermes Agent v0.17.0",
-      lhTitle:"Learn skill — the visual evolution of /learn",
-      lhBody:"Point Omnilimb at a local path, a URL, or pasted text in the dashboard — or just tell your agent in chat. It distills, validates and writes a native Hermes skill for you, behind the same structural validation loop.",
-      lhLead:"Just tell your agent in chat — or click through the dashboard:",
-      lhEx1c:"learn https://example.com/article",
-      lhEx1d:"distil a native skill from this web page",
-      lhEx2c:"learn: add a watermark to a PDF",
-      lhEx2d:"build a skill from a one-line description",
       heroTitle:"Give your Hermes agent hands & feet.",
-      heroSub:"Let your Hermes agent actually get things done — run community skills, an isolated sandbox, a browser and multi-language runtimes as deterministic tools, with zero extra LLM tokens on the execution path.",
+      heroSub:"Let your Hermes agent actually get things done — community skills, an isolated sandbox, a browser and multi-language runtimes, all as deterministic tools.",
       ctaGithub:"Get it on GitHub", ctaFeatures:"See what it does",
       whatTitle:"Hermes is the brain. Omnilimb is the hands & feet.",
       whatSub:"Built for Hermes users: you keep the brain, Omnilimb is the hands & feet. On the execution path it never calls a model itself — it just does the deterministic, reproducible work. Compatible with OpenClaw & ClawHub; not affiliated with them.",
@@ -262,14 +235,14 @@ hermes plugins enable omnilimb</pre>
       f8t:"Audit log", f8d:"An optional local JSONL audit log of tool calls you can view in the dashboard.",
       f9t:"Two backends", f9d:"Bridge to the real openclaw / clawhub CLIs, or run a fully decoupled native Python substrate — no Node needed.",
       f10t:"Learn skill (new)", f10d:"Distill a native Hermes skill from any source — a local path, a URL, or pasted text — validated and written to your Hermes skills.",
-      f11t:"Skill butler 技能管家 (new)", f11d:"An embedded live Hermes terminal plus a deterministic, no-LLM butler that health-checks, recommends and diagnoses your skills.",
+      f11t:"Skill butler 技能管家 (new)", f11d:"A deterministic, no-LLM butler that health-checks, recommends and diagnoses your skills — with Learn built in.",
       f12t:"Convert to native skill", f12d:"Turn an installed market skill into a native Hermes skill — deterministic or AI-curated, behind a structural validation loop.",
       shotsTitle:"See it in action", shotsSub:"Real screenshots from the Omnilimb dashboard tab.",
-      shot1:"Discovery leaderboards across markets — recommended, rising, hot & newest.",
-      shot2:"One-click health check (体检): a transparent 0–100 score before you install.",
-      shot3:"Manage installed skills — view, smoke-test, credentials, uninstall.",
-      shot4:"技能管家 (Skill butler) — an embedded live Hermes terminal + a deterministic, no-LLM butler.",
-      shot5:"学习技能 (Learn) — distill a native Hermes skill from a path, URL or pasted text.",
+      shot1:"Skill butler (技能管家) — a deterministic, no-LLM butler: health-check, recommend, diagnose, plus Learn.",
+      shot2:"Search across markets — one-click “Health-check all” scores every result (0–100 + grade) before you install.",
+      shot3:"Manage installed skills — health, credentials, smoke-test, plus Update and → Hermes convert.",
+      shot4:"Learn (学习技能) — distill a native Hermes skill from a path, URL or pasted text.",
+      shot5:"My skills (我的技能) — the native skills you've converted and learned, in one library.",
       startTitle:"Get started", startSub:"Install the plugin into your Hermes home and enable it.",
       startPip:"As a pip package:", startDir:"Or as a directory plugin:",
       licTitle:"Free & open source",
@@ -285,16 +258,8 @@ hermes plugins enable omnilimb</pre>
       v3t:"会转换、会学习", v3d:"任何技能转成原生 Hermes 技能 —— 或用一句话学个新技能。",
       vhook:"同样一件事,不必再调一次大模型:Omnilimb 直接确定性执行 —— 结果一样,token 账单不一样。",
       fg1:"接入并运行社区技能", fg2:"安全地执行", fg3:"转换 & 学习 · 1.0 新",
-      lhTag:"1.0 新功能 · 支持最新 Hermes Agent v0.17.0",
-      lhTitle:"学习技能 —— 最新 /learn 的可视化升级",
-      lhBody:"在仪表盘里给 Omnilimb 指一个本地路径、一个 URL 或粘贴一段文本 —— 或者直接在对话里告诉智能体。它会通过同一套结构校验循环,为你蒸馏、校验并写入一个原生 Hermes 技能。",
-      lhLead:"在对话里直接对智能体说一句话 —— 或在仪表盘里点几下:",
-      lhEx1c:"学习 https://example.com/article",
-      lhEx1d:"从这个网页蒸馏出一个原生技能",
-      lhEx2c:"学习:给 PDF 加水印",
-      lhEx2d:"从一句话描述生成一个技能",
       heroTitle:"给你的 Hermes 智能体装上手和脚。",
-      heroSub:"让你的 Hermes 智能体真正动手做事 —— 把社区技能、隔离沙箱、浏览器和多语言运行时变成确定性工具，执行路径零额外 LLM token。",
+      heroSub:"让你的 Hermes 智能体真正动手做事 —— 社区技能、隔离沙箱、浏览器和多语言运行时，全部是确定性工具。",
       ctaGithub:"前往 GitHub 获取", ctaFeatures:"看看它能做什么",
       whatTitle:"Hermes 是大脑，Omnilimb 是手和脚。",
       whatSub:"为 Hermes 用户打造:你保留大脑，Omnilimb 负责手脚。它在执行路径上从不自己调用模型，只做确定、可复现的事。兼容 OpenClaw 与 ClawHub，但与其无官方关联。",
@@ -309,14 +274,14 @@ hermes plugins enable omnilimb</pre>
       f8t:"审计日志", f8d:"可选的本地 JSONL 审计日志，可在仪表盘查看工具调用记录。",
       f9t:"双后端", f9d:"既能桥接真实的 openclaw / clawhub CLI，也能用完全脱钩的原生 Python 底座 —— 无需 Node。",
       f10t:"学习技能（新）", f10d:"从任意来源 —— 本地路径、URL 或粘贴文本 —— 蒸馏出原生 Hermes 技能，校验后写入你的 Hermes 技能库。",
-      f11t:"技能管家（新）", f11d:"内嵌一个实时 Hermes 终端，外加一个确定性(不调大模型)的管家，为你体检、推荐、诊断技能。",
+      f11t:"技能管家（新）", f11d:"一个确定性(不调大模型)的管家，为你体检、推荐、诊断技能，并内置「学习技能」。",
       f12t:"转换为原生技能", f12d:"把已安装的市场技能转换成原生 Hermes 技能 —— 确定性或 AI 策展，均过结构校验循环。",
       shotsTitle:"实际效果", shotsSub:"来自 Omnilimb 仪表盘标签页的真实截图。",
-      shot1:"跨市场发现榜单 —— 推荐、上升、热门、最新。",
-      shot2:"一键体检:安装前给出透明的 0–100 分。",
-      shot3:"管理已安装技能 —— 查看、冒烟测试、凭据、卸载。",
-      shot4:"技能管家 —— 内嵌实时 Hermes 终端 + 确定性(不调大模型)的技能管家。",
-      shot5:"学习技能 —— 从路径、URL 或粘贴文本蒸馏出原生 Hermes 技能。",
+      shot1:"技能管家 —— 确定性(不调大模型)的管家:体检、推荐、诊断，外加学习技能。",
+      shot2:"跨市场搜索 —— 一键「全部体检」，安装前给每条结果 0–100 分+评级。",
+      shot3:"管理已安装技能 —— 体检、凭据、冒烟测试，外加「更新」和「→ Hermes 转换」。",
+      shot4:"学习技能 —— 从路径、URL 或粘贴文本蒸馏出原生 Hermes 技能。",
+      shot5:"我的技能 —— 转换与学习产出的原生技能统一陈列（带「转换」「学习」来源标签）。",
       startTitle:"快速开始", startSub:"把插件装进你的 Hermes 主目录并启用。",
       startPip:"作为 pip 包安装：", startDir:"或作为目录插件：",
       licTitle:"完全免费 · 开源",
