@@ -19,6 +19,6 @@
     <!-- row 4 -->
     <g transform="translate(40,392)"><rect width="365" height="92" rx="12" fill="#0e1f1b" stroke="#36e0c0"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_learn</text><text x="20" y="60" fill="#cfe9e2" font-size="13">从任意来源学习原生技能 ——</text><text x="20" y="78" fill="#cfe9e2" font-size="13">路径、URL 或文本。</text></g>
     <g transform="translate(418,392)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="14">claw_pack_install · claw_skill_update</text><text x="20" y="60" fill="#9aa4be" font-size="13">精选技能包 + 重新解析</text><text x="20" y="78" fill="#9aa4be" font-size="13">过期的市场技能。</text></g>
-    <g transform="translate(796,392)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#5b8cff"/><text x="20" y="34" fill="#5b8cff" font-size="15" font-weight="700">+ 可选仪表盘 UI</text><text x="20" y="60" fill="#9aa4be" font-size="13">搜索 · 已安装 · 已转换 · 收藏 ·</text><text x="20" y="78" fill="#9aa4be" font-size="13">审计 · 技能管家 · 设置。</text></g>
+    <g transform="translate(796,392)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#5b8cff"/><text x="20" y="34" fill="#5b8cff" font-size="15" font-weight="700">+ 可选仪表盘 UI</text><text x="20" y="60" fill="#9aa4be" font-size="13">技能管家 · 搜索 · 已安装 ·</text><text x="20" y="78" fill="#9aa4be" font-size="13">我的技能 · 收藏 · 审查 · 设置。</text></g>
   </g>
 </svg>
