@@ -24,13 +24,16 @@ tool and every dashboard feature now ships unlocked, under MIT.
   `OMNILIMB_LICENSE` / Ed25519 machinery is retained but dormant (only re-engages
   if `OMNILIMB_ENFORCE_LICENSE=1` is set for a downstream commercial build).
 - **Dashboard rebuilt for the Hermes v0.17.0 plugin SDK** — host React (no
-  bundled React). Full panel: **Search** (with a Discover mode: leaderboards,
-  market toggle, categories), **Installed** (per-skill 体检 health score,
-  readiness, credentials, SKILL.md view/edit, smoke test, update badges,
-  export/import), **Converted**, **Favorites**, **Audit**, **技能管家** (an
-  embedded live Hermes terminal + a deterministic skill butler + a *learn from
-  any source* form), and **Settings** (with a compact overview). Bilingual
-  (EN / 简体中文).
+  bundled React). Tabs: **技能管家 (Skill butler)** — the default view, a
+  deterministic no-LLM butler (health-check / recommend / diagnose / scan
+  audit) with a *learn from any source* form built in; **Search** (with a
+  Discover mode — leaderboards, market toggle, categories — plus one-click
+  **全部体检** / health-check all that scores every result before install);
+  **Installed** (per-skill 体检 health score, readiness, credentials,
+  SKILL.md view/edit, smoke test, a one-click **Update**, **→ Hermes** convert,
+  export/import); **My skills (我的技能)** (the native skills you've converted
+  and learned, tagged by origin); **Favorites**; **审查 (Audit)**; and
+  **Settings** (with a compact overview). Bilingual (EN / 简体中文).
 
 ### Fixed
 - AI curation never ran for hyphenated model providers (e.g. `opencode-zen`):

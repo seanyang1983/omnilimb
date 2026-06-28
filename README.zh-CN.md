@@ -185,7 +185,7 @@ UI 会自动跟随当前仪表盘的主题与语言。
 ### 实际效果
 
 来自 Omnilimb 仪表盘标签页的真实截图 —— 确定性技能管家、带一键**全部体检**的市场
-搜索、已安装技能管理、**学习技能** 表单,以及你转换+学习产出的技能库(点击任意图片放大):
+搜索、已安装技能管理,以及**学习技能** 表单(点击任意图片放大):
 
 <table>
 <tr>
@@ -195,10 +195,6 @@ UI 会自动跟随当前仪表盘的主题与语言。
 <tr>
 <td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-installed-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-installed-zh.jpg" alt="已安装技能管理"/></a><br/><sub><b>已安装</b> —— 体检、凭据、冒烟测试,外加「更新」和「→ Hermes 转换」。</sub></td>
 <td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-learn-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-learn-zh.jpg" alt="从任意来源学习原生 Hermes 技能"/></a><br/><sub><b>学习技能</b> —— 从路径、URL 或粘贴文本蒸馏出原生 Hermes 技能。</sub></td>
-</tr>
-<tr>
-<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-myskills-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-myskills-zh.jpg" alt="我的技能 —— 转换与学习的原生技能统一陈列"/></a><br/><sub><b>我的技能</b> —— 转换与学习产出的原生技能统一陈列(带「转换」「学习」来源标签)。</sub></td>
-<td width="50%" valign="top"></td>
 </tr>
 </table>
 

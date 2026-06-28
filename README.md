@@ -203,8 +203,7 @@ The UI follows the active dashboard theme and language automatically.
 
 Real screenshots from the Omnilimb dashboard tab — the deterministic skill
 butler, market search with one-click **全部体检 (health-check all)**, installed-skill
-management, the **学习技能 (Learn)** form, and your converted + learned library
-(click any image to enlarge):
+management, and the **学习技能 (Learn)** form (click any image to enlarge):
 
 <table>
 <tr>
@@ -214,10 +213,6 @@ management, the **学习技能 (Learn)** form, and your converted + learned libr
 <tr>
 <td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-installed.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-installed.jpg" alt="Omnilimb installed-skills management"/></a><br/><sub><b>Installed</b> — health, credentials, smoke-test, Update &amp; → Hermes convert.</sub></td>
 <td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-learn.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-learn.jpg" alt="Omnilimb learn a native Hermes skill from any source"/></a><br/><sub><b>学习技能 (Learn)</b> — distill a native Hermes skill from a path, URL or text.</sub></td>
-</tr>
-<tr>
-<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-myskills.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@e09a7820578083b6d906ee8549461da809d2c233/docs/assets/ui-myskills.jpg" alt="Omnilimb My skills — converted and learned native skills in one library"/></a><br/><sub><b>My skills (我的技能)</b> — converted &amp; learned native skills in one library.</sub></td>
-<td width="50%" valign="top"></td>
 </tr>
 </table>
 
