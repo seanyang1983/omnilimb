@@ -34,6 +34,9 @@ New in 1.0: **Learn (学习技能)** — point Omnilimb at any source and it dis
 native Hermes skill for you. Drive it from the dashboard's visual **`/learn`**
 form, or just tell the agent **"学习 &lt;something&gt;"** in plain language.
 
+**The same task, without a second model call** — Omnilimb executes
+deterministically: same result, a very different token bill.
+
 > ℹ️ Compatible with OpenClaw &amp; ClawHub; not affiliated with them.
 > "Omnilimb" is an independent product ([omnilimb.com](https://www.omnilimb.com)).
 
@@ -263,10 +266,8 @@ raises) and how to add a market or backend.
 
 ## License
 
-> **Open 1.0 — every tool and dashboard feature is free, under MIT.** There is
-> no paid tier and no license to buy. (The optional Ed25519 licensing machinery
-> is retained but dormant; it only re-engages if a downstream build explicitly
-> sets `OMNILIMB_ENFORCE_LICENSE=1`.)
+> **Open 1.0 — every tool and dashboard feature is free, under MIT. No paid
+> tier, nothing to unlock — free, forever.**
 
 This repository is the full edition: skill discovery / install / run / sandbox /
 browser / runtimes, **plus** skill → native Hermes conversion (deterministic +
