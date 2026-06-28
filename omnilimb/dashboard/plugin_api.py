@@ -275,7 +275,16 @@ def search(q: str = "", market: str = "", limit: int = 12, page: int = 1,
                 tools.record_search(q)  # K: search history (best-effort)
             except Exception:
                 pass
-        return _loads(tools.claw_skill_search(a))
+        res = _loads(tools.claw_skill_search(a))
+        # Attach the transparent 0-100 health score + grade to every market
+        # result (same as the discover boards), so users see a per-skill 体检
+        # score BEFORE install — not just the registry's raw relevance number.
+        try:
+            if isinstance(res, dict) and res.get("skills"):
+                res["skills"] = _score_items(res["skills"])
+        except Exception:
+            pass
+        return res
 
 
 _DISCOVER_SORTS = [("recommended", "relevance"), ("rising", "stars"),
