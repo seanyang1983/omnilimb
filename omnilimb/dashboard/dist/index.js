@@ -42,7 +42,7 @@
       scoreTitle: "Skill health check", scoreRun: "Check", scoreAll: "Health-check all", scoreAllRun: "Checking…", alsoSearched: "Related terms also searched", scoreCaps: "Capabilities", recoYes: "Recommended", recoCaution: "Use with caution", recoNo: "Not recommended",
       updateAvail: "Update available",
       toHermes: "\u2192 Hermes", converting: "Converting…", toHermesHint: "Convert this skill into a native Hermes skill",
-      doUpdate: "Update", updatingNow: "Updating…",
+      doUpdate: "Update", updatingNow: "\u23f3 Updating…", updatedOk: "\u2713 %s updated to the latest version",
       tabSettings: "Settings", settingsTitle: "Settings", fieldAudit: "Audit logging", fieldCache: "Local cache", fieldTtl: "Discover cache TTL (s)", needRestart: "some changes apply on restart", diagTitle: "Diagnostics",
       
       workspaceHint: "Where skills are installed. Leave empty to use the default (~/.openclaw/workspace).",
@@ -87,7 +87,7 @@
       scoreTitle: "技能体检", scoreRun: "体检", scoreAll: "全部体检", scoreAllRun: "体检中…", alsoSearched: "已自动包含相关词的搜索结果", scoreCaps: "能力", recoYes: "推荐安装/使用", recoCaution: "谨慎", recoNo: "不推荐",
       updateAvail: "有可用更新",
       toHermes: "\u2192 Hermes", converting: "转换中…", toHermesHint: "把这个技能转换成原生 Hermes 技能",
-      doUpdate: "更新", updatingNow: "更新中…",
+      doUpdate: "更新", updatingNow: "\u23f3 更新中…", updatedOk: "\u2713 %s 已更新到最新版本",
       tabSettings: "设置", settingsTitle: "设置", fieldAudit: "审计日志记录", fieldCache: "本地缓存", fieldTtl: "发现页缓存有效期(秒)", needRestart: "部分改动重启后生效", diagTitle: "诊断",
       
       workspaceHint: "技能的安装目录；留空使用默认（~/.openclaw/workspace）。",
@@ -100,7 +100,7 @@
       fieldShowStats: "顶部统计卡", showStatsHint: "在页面顶部显示五个概览方块（已安装、累计调用、可更新、收藏、健康）。",
       exportSkills: "导出", importSkills: "导入", importDone: "已导入", favorite: "收藏", recentSearch: "最近搜索", myFavorites: "我的收藏",
       tabFavorites: "收藏", favEmpty: "还没有收藏。点任意技能上的红心即可收藏到这里。", favRemove: "移除",
-      tabAudit: "审计", auditTitle: "审计日志", auditDisabled: "审计未开启。在 config.yaml 中启用：omnilimb.audit_log: true", noAudit: "暂无审计记录。", filterTool: "工具", filterStatus: "状态", statusAll: "全部", statusOk: "仅成功", statusFail: "仅失败", export: "导出", time: "时间",
+      tabAudit: "审查", auditTitle: "审查日志", auditDisabled: "审查未开启。在 config.yaml 中启用：omnilimb.audit_log: true", noAudit: "暂无审查记录。", filterTool: "工具", filterStatus: "状态", statusAll: "全部", statusOk: "仅成功", statusFail: "仅失败", export: "导出", time: "时间",
       cachedNotice: "上游不可达 — 显示缓存结果（可能已过期）",
       heroKicker: "OPENCLAW 技能市场 · 智能体直驱底座", heroSubtitle: "让 Hermes 的大脑直接驱动整个 OpenClaw 技能生态 —— 社区技能、沙箱、浏览器与多语言运行时统一成确定性的结构化 JSON 工具,由智能体直接调用;不额外跑一层 AI、零推理消耗,找到即装、装完即跑。", refreshAll: "刷新", statBackend: "后端", statMarket: "市场", statInstalled: "已安装", statHealth: "健康", healthyShort: "正常", attentionShort: "需关注", statSuccess: "运行成功率", statMarkets: "可用市场", statCalls: "次调用", noRunsShort: "暂无运行", statCallsTotal: "累计调用", statUpdates: "可更新",
       from: "源自", catAll: "全部",
@@ -861,6 +861,7 @@
             h("button", { className: "ex-btn", onClick: backToDiscover }, t("backDiscover")),
             (r && r.stale) ? h("span", { className: "ex-notice" }, "⚠ " + t("cachedNotice")) : null,
             (total) ? h("span", { className: "ex-meta" }, total + " " + t("resultsTotal")) : null,
+            (r && r.skills && r.skills.length) ? h("button", { key: "sa", className: "ex-btn", onClick: scoreAll, disabled: scoringAll[0] }, scoringAll[0] ? t("scoreAllRun") : t("scoreAll")) : null,
             (r && r.expanded && r.expanded.length) ? h("span", { className: "ex-badge ex-badge-ok", title: t("alsoSearched") }, "+ " + r.expanded.join(", ")) : null,
             null),
           loading[0] ? h("div", { className: "ex-loadwrap" }, [
@@ -1191,8 +1192,15 @@
       setUp(slug, true);
       post("/update", { slug: slug })
         .then(function (r) {
-          if (r && r.ok) { load(); }
-          else { window.alert((r && r.error) || "update failed"); }
+          if (r && r.ok) {
+            // Optimistically clear this skill's update badge (we just updated it),
+            // refresh the installed list for new versions, and force a fresh
+            // update-check in the background to reconcile.
+            updates[1](function (prev) { var c = Object.assign({}, prev); delete c[slug]; return c; });
+            api("/installed").then(d[1]).catch(function () {});
+            api("/skill_updates?force=true").then(function (rr) { if (rr && rr.updates) updates[1](rr.updates); }).catch(function () {});
+            window.alert(t("updatedOk").replace("%s", slug));
+          } else { window.alert((r && r.error) || "update failed"); }
         })
         .catch(function (e) { window.alert(String(e)); })
         .finally(function () { setUp(slug, false); });
