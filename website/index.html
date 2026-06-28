@@ -80,7 +80,11 @@
   .learn-hl h3{margin:0 0 8px;font-size:21px}
   .learn-hl p{margin:0 0 12px;color:var(--muted);font-size:15px}
   .learn-hl code{background:#0a0d15;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--brand2);font-size:14px;white-space:nowrap}
-  .learn-hl .cmds{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .learn-hl .cmds-lead{margin:16px 0 10px;color:var(--txt);font-size:14px;font-weight:600}
+  .learn-hl .cmds{display:flex;flex-direction:column;gap:9px}
+  .learn-hl .ex{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:14px}
+  .learn-hl .ex .arr{color:var(--brand2)}
+  .learn-hl .ex .desc{color:var(--muted)}
   .lightbox{position:fixed;inset:0;background:rgba(4,6,12,.93);display:none;align-items:center;justify-content:center;z-index:1000;padding:24px;cursor:zoom-out}
   .lightbox.open{display:flex}
   .lightbox img{max-width:96vw;max-height:92vh;border:1px solid var(--line);border-radius:12px;box-shadow:0 24px 70px rgba(0,0,0,.65)}
@@ -118,9 +122,10 @@
     <span class="tag" data-t="lhTag">New in 1.0 · supports Hermes Agent v0.17.0</span>
     <h3 data-t="lhTitle">学习技能 — the visual evolution of /learn</h3>
     <p data-t="lhBody">Point Omnilimb at a local path, a URL, or pasted text in the dashboard — or just tell your agent in chat. It distills, validates and writes a native Hermes skill for you, behind the same structural validation loop.</p>
+    <p class="cmds-lead" data-t="lhLead">Just tell your agent in chat — or click through the dashboard:</p>
     <div class="cmds">
-      <code data-t="lhCmd1">learn https://example.com/guide</code>
-      <code data-t="lhCmd2">学习 XXXX</code>
+      <div class="ex"><code data-t="lhEx1c">learn https://example.com/article</code><span class="arr">→</span><span class="desc" data-t="lhEx1d">distil a native skill from this web page</span></div>
+      <div class="ex"><code data-t="lhEx2c">learn: add a watermark to a PDF</code><span class="arr">→</span><span class="desc" data-t="lhEx2d">build a skill from a one-line description</span></div>
     </div>
   </section>
 
@@ -203,8 +208,11 @@ hermes plugins enable omnilimb</pre>
       lhTag:"New in 1.0 · supports Hermes Agent v0.17.0",
       lhTitle:"Learn skill — the visual evolution of /learn",
       lhBody:"Point Omnilimb at a local path, a URL, or pasted text in the dashboard — or just tell your agent in chat. It distills, validates and writes a native Hermes skill for you, behind the same structural validation loop.",
-      lhCmd1:"learn https://example.com/guide",
-      lhCmd2:"learn XXXX (学习 XXXX)",
+      lhLead:"Just tell your agent in chat — or click through the dashboard:",
+      lhEx1c:"learn https://example.com/article",
+      lhEx1d:"distil a native skill from this web page",
+      lhEx2c:"learn: add a watermark to a PDF",
+      lhEx2d:"build a skill from a one-line description",
       heroTitle:"Give your Hermes agent hands & feet.",
       heroSub:"Omnilimb runs OpenClaw / ClawHub community skills, an isolated sandbox, a Playwright browser and multi-language runtimes as deterministic structured-JSON tools the agent calls directly — zero extra LLM tokens on the execution path.",
       ctaGithub:"Get it on GitHub", ctaFeatures:"See what it does",
@@ -242,8 +250,11 @@ hermes plugins enable omnilimb</pre>
       lhTag:"1.0 新功能 · 支持最新 Hermes Agent v0.17.0",
       lhTitle:"学习技能 —— 最新 /learn 的可视化升级",
       lhBody:"在仪表盘里给 Omnilimb 指一个本地路径、一个 URL 或粘贴一段文本 —— 或者直接在对话里告诉智能体。它会通过同一套结构校验循环,为你蒸馏、校验并写入一个原生 Hermes 技能。",
-      lhCmd1:"learn https://example.com/guide",
-      lhCmd2:"学习 XXXX",
+      lhLead:"在对话里直接对智能体说一句话 —— 或在仪表盘里点几下:",
+      lhEx1c:"学习 https://example.com/article",
+      lhEx1d:"从这个网页蒸馏出一个原生技能",
+      lhEx2c:"学习:给 PDF 加水印",
+      lhEx2d:"从一句话描述生成一个技能",
       heroTitle:"给你的 Hermes 智能体装上手和脚。",
       heroSub:"Omnilimb 把 OpenClaw / ClawHub 社区技能、隔离沙箱、Playwright 浏览器和多语言运行时，变成智能体可直接调用的、确定性的结构化 JSON 工具 —— 执行路径零额外 LLM token。",
       ctaGithub:"前往 GitHub 获取", ctaFeatures:"看看它能做什么",
