@@ -68,7 +68,7 @@
   .shots-track::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
   .shot{flex:0 0 100%;scroll-snap-align:center;margin:0}
   @media(min-width:760px){.shot{flex-basis:calc(50% - 7px)}}
-  .shot img{width:100%;border:1px solid var(--line);border-radius:12px;display:block}
+  .shot img{width:100%;aspect-ratio:1440/880;object-fit:cover;border:1px solid var(--line);border-radius:12px;display:block}
   .shot figcaption{color:var(--muted);font-size:13px;margin-top:8px;text-align:center}
   .shots-nav{display:flex;justify-content:center;gap:12px;margin-top:12px}
   .shots-nav button{background:var(--panel2);color:var(--txt);border:1px solid var(--line);border-radius:999px;width:42px;height:42px;cursor:pointer;font-size:20px;line-height:1}
@@ -109,6 +109,9 @@
   <h2 class="section-title" id="features" data-t="featTitle">What it does</h2>
   <p class="section-sub" data-t="featSub">A small set of structured-JSON tools your agent can call directly.</p>
   <div class="grid">
+    <div class="card" style="border-color:var(--brand2)"><span class="ic">🧠</span><h3 data-t="f11t">Skill butler 技能管家 (new)</h3><p data-t="f11d">An embedded live Hermes terminal plus a deterministic, no-LLM butler that health-checks, recommends and diagnoses your skills.</p></div>
+    <div class="card" style="border-color:var(--brand2)"><span class="ic">✨</span><h3 data-t="f10t">Learn skill (new)</h3><p data-t="f10d">Distill a native Hermes skill from any source — a local path, a URL, or pasted text — validated and written to your Hermes skills.</p></div>
+    <div class="card" style="border-color:var(--brand2)"><span class="ic">🔄</span><h3 data-t="f12t">Convert to native skill</h3><p data-t="f12d">Turn an installed market skill into a native Hermes skill — deterministic or AI-curated, behind a structural validation loop.</p></div>
     <div class="card"><span class="ic">🔎</span><h3 data-t="f1t">Find &amp; install skills</h3><p data-t="f1d">Search the ClawHub / SkillHub registries and install skills by slug, git repo, or local path — with verification.</p></div>
     <div class="card"><span class="ic">⚙️</span><h3 data-t="f2t">Run deterministically</h3><p data-t="f2d">Execute a skill's script entrypoint with retry and rollback — no second AI loop, no inference overhead.</p></div>
     <div class="card"><span class="ic">📦</span><h3 data-t="f3t">Isolated sandbox</h3><p data-t="f3d">Run untrusted commands in a Docker sandbox with the network off by default and instant rollback.</p></div>
@@ -118,9 +121,6 @@
     <div class="card"><span class="ic">🧭</span><h3 data-t="f7t">Discovery &amp; health check</h3><p data-t="f7d">Browse leaderboards across markets and run a per-skill health check (体检) before you install.</p></div>
     <div class="card"><span class="ic">📝</span><h3 data-t="f8t">Audit log</h3><p data-t="f8d">An optional local JSONL audit log of tool calls you can view in the dashboard.</p></div>
     <div class="card"><span class="ic">🔁</span><h3 data-t="f9t">Two backends</h3><p data-t="f9d">Bridge to the real openclaw / clawhub CLIs, or run a fully decoupled native Python substrate — no Node needed.</p></div>
-    <div class="card" style="border-color:var(--brand2)"><span class="ic">✨</span><h3 data-t="f10t">Learn skill (new)</h3><p data-t="f10d">Distill a native Hermes skill from any source — a local path, a URL, or pasted text — validated and written to your Hermes skills.</p></div>
-    <div class="card" style="border-color:var(--brand2)"><span class="ic">🧠</span><h3 data-t="f11t">Skill butler 技能管家 (new)</h3><p data-t="f11d">An embedded live Hermes terminal plus a deterministic, no-LLM butler that health-checks, recommends and diagnoses your skills.</p></div>
-    <div class="card" style="border-color:var(--brand2)"><span class="ic">🔄</span><h3 data-t="f12t">Convert to native skill</h3><p data-t="f12d">Turn an installed market skill into a native Hermes skill — deterministic or AI-curated, behind a structural validation loop.</p></div>
   </div>
   <img class="diagram" data-en="assets/tools.svg" data-zh="assets/tools-zh.svg" src="assets/tools.svg" alt="The eight structured-JSON tools the agent calls directly" loading="lazy" />
 
