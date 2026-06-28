@@ -3,6 +3,19 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); versioning is [SemVer](https://semver.org/).
 
+## [1.0.1] - 2026-06-28
+
+Docs & packaging only — no code or API changes.
+
+### Changed
+- README (EN + 简体中文) restructured to mirror the omnilimb.com layout: three
+  value pillars (zero extra tokens / deterministic & safe / convert & learn)
+  plus features grouped into **Run community skills / Execute safely / Convert &
+  learn**, with the value hook added and the dormant-licensing detail trimmed.
+- Dashboard-tab descriptions and screenshots refreshed to the shipped 1.0 UI
+  (Skill butler first, My skills, 审查, Update, 全部体检); image URLs pinned for
+  stable rendering on GitHub and PyPI.
+
 ## [1.0.0] - 2026-06-28
 
 **Open 1.0 — everything is free.** The previous open-core split is gone: every
