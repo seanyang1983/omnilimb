@@ -1,62 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="430" viewBox="0 0 1200 430" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',Helvetica,Arial,sans-serif">
-  <rect width="1200" height="430" rx="18" fill="#0c0e14"/>
-  <rect x="0.5" y="0.5" width="1199" height="429" rx="18" fill="none" stroke="#27304a"/>
-  <text x="40" y="50" fill="#e8ecf6" font-size="22" font-weight="700">智能体可直接调用的 8 个结构化 JSON 工具</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',Helvetica,Arial,sans-serif">
+  <rect width="1200" height="540" rx="18" fill="#0c0e14"/>
+  <rect x="0.5" y="0.5" width="1199" height="539" rx="18" fill="none" stroke="#27304a"/>
+  <text x="40" y="50" fill="#e8ecf6" font-size="22" font-weight="700">智能体可直接调用的结构化 JSON 工具</text>
 
   <g font-size="15">
-    <g transform="translate(40,80)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_skill_search</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">跨多个市场搜索 ClawHub /</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">SkillHub 技能。</text>
-    </g>
-    <g transform="translate(418,80)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_skill_install</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">按 slug、git 仓库或本地路径</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">安装并校验。</text>
-    </g>
-    <g transform="translate(796,80)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_skill_run</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">运行技能脚本入口,</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">带重试 + 回滚。</text>
-    </g>
-    <g transform="translate(40,184)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_sandbox_exec</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">在 Docker 沙箱中运行命令,</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">默认断网 + 回滚。</text>
-    </g>
-    <g transform="translate(418,184)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_browser</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">用结构化动作列表驱动</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">Playwright 浏览器。</text>
-    </g>
-    <g transform="translate(796,184)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_runtime</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">快速运行 python / node /</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">bash / ruby / go 片段。</text>
-    </g>
-    <g transform="translate(40,288)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_skill_list</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">列出已安装技能</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">及其来源。</text>
-    </g>
-    <g transform="translate(418,288)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_skill_runs</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">已安装技能的运行历史</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">与诊断。</text>
-    </g>
-    <g transform="translate(796,288)">
-      <rect width="365" height="92" rx="12" fill="#0e1f1b" stroke="#2c4a44"/>
-      <text x="20" y="34" fill="#5b8cff" font-size="15" font-weight="700">+ 可选仪表盘 UI</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">搜索 · 已安装 · 收藏 ·</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">审计 · 设置 标签页。</text>
-    </g>
+    <!-- row 1 -->
+    <g transform="translate(40,80)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_search</text><text x="20" y="60" fill="#9aa4be" font-size="13">跨多个市场搜索 ClawHub /</text><text x="20" y="78" fill="#9aa4be" font-size="13">SkillHub 技能。</text></g>
+    <g transform="translate(418,80)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_install</text><text x="20" y="60" fill="#9aa4be" font-size="13">按 slug、git 仓库或本地路径</text><text x="20" y="78" fill="#9aa4be" font-size="13">安装并校验。</text></g>
+    <g transform="translate(796,80)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_run</text><text x="20" y="60" fill="#9aa4be" font-size="13">运行技能脚本入口,</text><text x="20" y="78" fill="#9aa4be" font-size="13">带重试 + 回滚。</text></g>
+    <!-- row 2 -->
+    <g transform="translate(40,184)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_sandbox_exec</text><text x="20" y="60" fill="#9aa4be" font-size="13">在 Docker 沙箱中运行命令,</text><text x="20" y="78" fill="#9aa4be" font-size="13">默认断网 + 回滚。</text></g>
+    <g transform="translate(418,184)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_browser</text><text x="20" y="60" fill="#9aa4be" font-size="13">用结构化动作列表驱动</text><text x="20" y="78" fill="#9aa4be" font-size="13">Playwright 浏览器。</text></g>
+    <g transform="translate(796,184)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_runtime</text><text x="20" y="60" fill="#9aa4be" font-size="13">快速运行 python / node /</text><text x="20" y="78" fill="#9aa4be" font-size="13">bash / ruby / go 片段。</text></g>
+    <!-- row 3 -->
+    <g transform="translate(40,288)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_list</text><text x="20" y="60" fill="#9aa4be" font-size="13">列出已安装技能</text><text x="20" y="78" fill="#9aa4be" font-size="13">及其来源。</text></g>
+    <g transform="translate(418,288)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_runs</text><text x="20" y="60" fill="#9aa4be" font-size="13">已安装技能的运行历史</text><text x="20" y="78" fill="#9aa4be" font-size="13">与诊断。</text></g>
+    <g transform="translate(796,288)"><rect width="365" height="92" rx="12" fill="#0e1f1b" stroke="#36e0c0"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_to_hermes</text><text x="20" y="60" fill="#cfe9e2" font-size="13">把技能转换成原生 Hermes</text><text x="20" y="78" fill="#cfe9e2" font-size="13">技能(确定性 / AI 策展)。</text></g>
+    <!-- row 4 -->
+    <g transform="translate(40,392)"><rect width="365" height="92" rx="12" fill="#0e1f1b" stroke="#36e0c0"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_learn</text><text x="20" y="60" fill="#cfe9e2" font-size="13">从任意来源学习原生技能 ——</text><text x="20" y="78" fill="#cfe9e2" font-size="13">路径、URL 或文本。</text></g>
+    <g transform="translate(418,392)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="14">claw_pack_install · claw_skill_update</text><text x="20" y="60" fill="#9aa4be" font-size="13">精选技能包 + 重新解析</text><text x="20" y="78" fill="#9aa4be" font-size="13">过期的市场技能。</text></g>
+    <g transform="translate(796,392)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#5b8cff"/><text x="20" y="34" fill="#5b8cff" font-size="15" font-weight="700">+ 可选仪表盘 UI</text><text x="20" y="60" fill="#9aa4be" font-size="13">搜索 · 已安装 · 已转换 · 收藏 ·</text><text x="20" y="78" fill="#9aa4be" font-size="13">审计 · 技能管家 · 设置。</text></g>
   </g>
 </svg>

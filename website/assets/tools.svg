@@ -1,65 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="430" viewBox="0 0 1200 430" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
-  <rect width="1200" height="430" rx="18" fill="#0c0e14"/>
-  <rect x="0.5" y="0.5" width="1199" height="429" rx="18" fill="none" stroke="#27304a"/>
-  <text x="40" y="50" fill="#e8ecf6" font-size="22" font-weight="700">8 structured-JSON tools the agent calls directly</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif">
+  <rect width="1200" height="540" rx="18" fill="#0c0e14"/>
+  <rect x="0.5" y="0.5" width="1199" height="539" rx="18" fill="none" stroke="#27304a"/>
+  <text x="40" y="50" fill="#e8ecf6" font-size="22" font-weight="700">The structured-JSON tools the agent calls directly</text>
 
   <g font-size="15">
     <!-- row 1 -->
-    <g transform="translate(40,80)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_skill_search</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">Search ClawHub / SkillHub registries</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">across multiple markets.</text>
-    </g>
-    <g transform="translate(418,80)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_skill_install</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">Install + verify by slug, git repo</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">or local path.</text>
-    </g>
-    <g transform="translate(796,80)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_skill_run</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">Run a skill's entrypoint with</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">retry + rollback.</text>
-    </g>
+    <g transform="translate(40,80)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_search</text><text x="20" y="60" fill="#9aa4be" font-size="13">Search ClawHub / SkillHub registries</text><text x="20" y="78" fill="#9aa4be" font-size="13">across multiple markets.</text></g>
+    <g transform="translate(418,80)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_install</text><text x="20" y="60" fill="#9aa4be" font-size="13">Install + verify by slug, git repo</text><text x="20" y="78" fill="#9aa4be" font-size="13">or local path.</text></g>
+    <g transform="translate(796,80)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_run</text><text x="20" y="60" fill="#9aa4be" font-size="13">Run a skill's entrypoint with</text><text x="20" y="78" fill="#9aa4be" font-size="13">retry + rollback.</text></g>
     <!-- row 2 -->
-    <g transform="translate(40,184)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_sandbox_exec</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">Run commands in a Docker sandbox</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">with network off + rollback.</text>
-    </g>
-    <g transform="translate(418,184)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_browser</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">Drive a Playwright browser via a</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">structured action list.</text>
-    </g>
-    <g transform="translate(796,184)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_runtime</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">Quick snippet in python / node /</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">bash / ruby / go.</text>
-    </g>
+    <g transform="translate(40,184)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_sandbox_exec</text><text x="20" y="60" fill="#9aa4be" font-size="13">Run commands in a Docker sandbox</text><text x="20" y="78" fill="#9aa4be" font-size="13">with network off + rollback.</text></g>
+    <g transform="translate(418,184)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_browser</text><text x="20" y="60" fill="#9aa4be" font-size="13">Drive a Playwright browser via a</text><text x="20" y="78" fill="#9aa4be" font-size="13">structured action list.</text></g>
+    <g transform="translate(796,184)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_runtime</text><text x="20" y="60" fill="#9aa4be" font-size="13">Quick snippet in python / node /</text><text x="20" y="78" fill="#9aa4be" font-size="13">bash / ruby / go.</text></g>
     <!-- row 3 -->
-    <g transform="translate(40,288)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_skill_list</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">List installed skills and their</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">provenance.</text>
-    </g>
-    <g transform="translate(418,288)">
-      <rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/>
-      <text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="15">claw_skill_runs</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">Recent run history &amp; diagnostics</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">for installed skills.</text>
-    </g>
-    <g transform="translate(796,288)">
-      <rect width="365" height="92" rx="12" fill="#0e1f1b" stroke="#2c4a44"/>
-      <text x="20" y="34" fill="#5b8cff" font-size="15" font-weight="700">+ optional dashboard UI</text>
-      <text x="20" y="60" fill="#9aa4be" font-size="13">Search · Installed · Favorites ·</text>
-      <text x="20" y="78" fill="#9aa4be" font-size="13">Audit · Settings tabs.</text>
-    </g>
+    <g transform="translate(40,288)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_list</text><text x="20" y="60" fill="#9aa4be" font-size="13">List installed skills and their</text><text x="20" y="78" fill="#9aa4be" font-size="13">provenance.</text></g>
+    <g transform="translate(418,288)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_runs</text><text x="20" y="60" fill="#9aa4be" font-size="13">Recent run history &amp; diagnostics</text><text x="20" y="78" fill="#9aa4be" font-size="13">for installed skills.</text></g>
+    <g transform="translate(796,288)"><rect width="365" height="92" rx="12" fill="#0e1f1b" stroke="#36e0c0"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_to_hermes</text><text x="20" y="60" fill="#cfe9e2" font-size="13">Convert a skill into a native</text><text x="20" y="78" fill="#cfe9e2" font-size="13">Hermes skill (deterministic / AI).</text></g>
+    <!-- row 4 -->
+    <g transform="translate(40,392)"><rect width="365" height="92" rx="12" fill="#0e1f1b" stroke="#36e0c0"/><text x="20" y="34" fill="#36e0c0" font-family="monospace">claw_skill_learn</text><text x="20" y="60" fill="#cfe9e2" font-size="13">Learn a native skill from any</text><text x="20" y="78" fill="#cfe9e2" font-size="13">source — a path, URL or text.</text></g>
+    <g transform="translate(418,392)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#27304a"/><text x="20" y="34" fill="#36e0c0" font-family="monospace" font-size="14">claw_pack_install · claw_skill_update</text><text x="20" y="60" fill="#9aa4be" font-size="13">Curated skill packs + re-resolve</text><text x="20" y="78" fill="#9aa4be" font-size="13">stale market skills.</text></g>
+    <g transform="translate(796,392)"><rect width="365" height="92" rx="12" fill="#141824" stroke="#5b8cff"/><text x="20" y="34" fill="#5b8cff" font-size="15" font-weight="700">+ optional dashboard UI</text><text x="20" y="60" fill="#9aa4be" font-size="13">Search · Installed · Converted ·</text><text x="20" y="78" fill="#9aa4be" font-size="13">Favorites · Audit · 技能管家 · Settings.</text></g>
   </g>
 </svg>

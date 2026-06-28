@@ -13,41 +13,37 @@
   <rect x="0.5" y="0.5" width="1199" height="339" rx="20" fill="none" stroke="#27304a"/>
 
   <!-- badge -->
-  <g transform="translate(72,64)">
-    <rect width="318" height="30" rx="15" fill="#0e1f1b" stroke="#2c4a44"/>
-    <text x="159" y="20" text-anchor="middle" fill="#36e0c0" font-size="13" letter-spacing="0.5">Free &amp; open source · MIT · community edition</text>
+  <g transform="translate(72,60)">
+    <rect width="338" height="30" rx="15" fill="#0e1f1b" stroke="#2c4a44"/>
+    <text x="169" y="20" text-anchor="middle" fill="#36e0c0" font-size="13" letter-spacing="0.4">Free · open source · MIT · v1.0 — all features free</text>
   </g>
 
   <!-- wordmark -->
-  <text x="70" y="170" font-size="68" font-weight="700" fill="#e8ecf6">Omni<tspan fill="#36e0c0">limb</tspan></text>
+  <text x="70" y="166" font-size="68" font-weight="700" fill="#e8ecf6">Omni<tspan fill="#36e0c0">limb</tspan></text>
 
   <!-- tagline -->
-  <text x="72" y="212" font-size="24" fill="#e8ecf6">Give your Hermes agent hands &amp; feet.</text>
-  <text x="72" y="248" font-size="16" fill="#9aa4be">Run community skills, an isolated sandbox, a Playwright browser and</text>
-  <text x="72" y="272" font-size="16" fill="#9aa4be">multi-language runtimes as deterministic structured-JSON tools.</text>
+  <text x="72" y="208" font-size="24" fill="#e8ecf6">Give your Hermes agent hands &amp; feet.</text>
+  <text x="72" y="242" font-size="15" fill="#9aa4be">Run skills, an isolated sandbox, a Playwright browser and runtimes — and</text>
+  <text x="72" y="263" font-size="15" fill="#9aa4be">convert or learn any skill into a native Hermes skill.</text>
 
   <!-- zero-token chip -->
-  <g transform="translate(72,294)">
-    <rect width="250" height="28" rx="14" fill="#141824" stroke="#27304a"/>
+  <g transform="translate(72,286)">
+    <rect width="262" height="28" rx="14" fill="#141824" stroke="#27304a"/>
     <circle cx="18" cy="14" r="4" fill="#36e0c0"/>
     <text x="32" y="19" fill="#e8ecf6" font-size="13">Zero extra LLM tokens on the path</text>
   </g>
 
   <!-- right-side glyph: brain -> limbs -->
   <g transform="translate(840,70)" fill="none" stroke-width="2.5">
-    <!-- brain node -->
     <circle cx="120" cy="40" r="34" fill="#141824" stroke="url(#accent)"/>
     <text x="120" y="45" text-anchor="middle" fill="#e8ecf6" font-size="13" stroke="none">Hermes</text>
-    <!-- hub -->
     <rect x="84" y="120" width="72" height="40" rx="10" fill="#1b2030" stroke="#5b8cff"/>
     <text x="120" y="145" text-anchor="middle" fill="#9aa4be" font-size="11" stroke="none">Omnilimb</text>
-    <!-- spokes -->
     <path d="M120 74 L120 120" stroke="#27304a"/>
     <path d="M84 140 L24 196" stroke="#27304a"/>
     <path d="M120 160 L120 196" stroke="#27304a"/>
     <path d="M156 140 L216 196" stroke="#27304a"/>
     <path d="M156 130 L260 130" stroke="#27304a"/>
-    <!-- limb nodes -->
     <g stroke="#2c4a44">
       <rect x="-6" y="196" width="60" height="30" rx="8" fill="#0e1f1b"/>
       <rect x="90" y="196" width="60" height="30" rx="8" fill="#0e1f1b"/>

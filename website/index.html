@@ -118,6 +118,9 @@
     <div class="card"><span class="ic">🧭</span><h3 data-t="f7t">Discovery &amp; health check</h3><p data-t="f7d">Browse leaderboards across markets and run a per-skill health check (体检) before you install.</p></div>
     <div class="card"><span class="ic">📝</span><h3 data-t="f8t">Audit log</h3><p data-t="f8d">An optional local JSONL audit log of tool calls you can view in the dashboard.</p></div>
     <div class="card"><span class="ic">🔁</span><h3 data-t="f9t">Two backends</h3><p data-t="f9d">Bridge to the real openclaw / clawhub CLIs, or run a fully decoupled native Python substrate — no Node needed.</p></div>
+    <div class="card" style="border-color:var(--brand2)"><span class="ic">✨</span><h3 data-t="f10t">Learn skill (new)</h3><p data-t="f10d">Distill a native Hermes skill from any source — a local path, a URL, or pasted text — validated and written to your Hermes skills.</p></div>
+    <div class="card" style="border-color:var(--brand2)"><span class="ic">🧠</span><h3 data-t="f11t">Skill butler 技能管家 (new)</h3><p data-t="f11d">An embedded live Hermes terminal plus a deterministic, no-LLM butler that health-checks, recommends and diagnoses your skills.</p></div>
+    <div class="card" style="border-color:var(--brand2)"><span class="ic">🔄</span><h3 data-t="f12t">Convert to native skill</h3><p data-t="f12d">Turn an installed market skill into a native Hermes skill — deterministic or AI-curated, behind a structural validation loop.</p></div>
   </div>
   <img class="diagram" data-en="assets/tools.svg" data-zh="assets/tools-zh.svg" src="assets/tools.svg" alt="The eight structured-JSON tools the agent calls directly" loading="lazy" />
 
@@ -128,6 +131,8 @@
       <figure class="shot"><img data-en="assets/ui-search.jpg" data-zh="assets/ui-search-zh.jpg" src="assets/ui-search.jpg" alt="Omnilimb live skill search across markets" loading="lazy" /><figcaption data-t="shot1">Live skill search across markets — here a search for “PPT”.</figcaption></figure>
       <figure class="shot"><img data-en="assets/ui-healthcheck.jpg" data-zh="assets/ui-healthcheck-zh.jpg" src="assets/ui-healthcheck.jpg" alt="Omnilimb per-skill health check and score breakdown" loading="lazy" /><figcaption data-t="shot2">One-click health check (体检): a transparent 0–100 score before you install.</figcaption></figure>
       <figure class="shot"><img data-en="assets/ui-installed.jpg" data-zh="assets/ui-installed-zh.jpg" src="assets/ui-installed.jpg" alt="Omnilimb installed-skills management" loading="lazy" /><figcaption data-t="shot3">Manage installed skills — view, smoke-test, credentials, uninstall.</figcaption></figure>
+      <figure class="shot"><img data-en="assets/ui-steward.jpg" data-zh="assets/ui-steward-zh.jpg" src="assets/ui-steward.jpg" alt="Omnilimb skill butler (技能管家) with an embedded Hermes terminal" loading="lazy" /><figcaption data-t="shot4">技能管家 — an embedded live Hermes terminal + a deterministic skill butler.</figcaption></figure>
+      <figure class="shot"><img data-en="assets/ui-learn.jpg" data-zh="assets/ui-learn-zh.jpg" src="assets/ui-learn.jpg" alt="Omnilimb learn a native Hermes skill from any source" loading="lazy" /><figcaption data-t="shot5">学习技能 — distill a native Hermes skill from a path, URL or text.</figcaption></figure>
     </div>
     <div class="shots-nav">
       <button type="button" id="shotsPrev" aria-label="Previous screenshot">‹</button>
@@ -182,10 +187,15 @@ hermes plugins enable omnilimb</pre>
       f7t:"Discovery & health check", f7d:"Browse leaderboards across markets and run a per-skill health check before you install.",
       f8t:"Audit log", f8d:"An optional local JSONL audit log of tool calls you can view in the dashboard.",
       f9t:"Two backends", f9d:"Bridge to the real openclaw / clawhub CLIs, or run a fully decoupled native Python substrate — no Node needed.",
+      f10t:"Learn skill (new)", f10d:"Distill a native Hermes skill from any source — a local path, a URL, or pasted text — validated and written to your Hermes skills.",
+      f11t:"Skill butler 技能管家 (new)", f11d:"An embedded live Hermes terminal plus a deterministic, no-LLM butler that health-checks, recommends and diagnoses your skills.",
+      f12t:"Convert to native skill", f12d:"Turn an installed market skill into a native Hermes skill — deterministic or AI-curated, behind a structural validation loop.",
       shotsTitle:"See it in action", shotsSub:"Real screenshots from the Omnilimb dashboard tab.",
       shot1:"Discovery leaderboards across markets — recommended, rising, hot & newest.",
       shot2:"One-click health check (体检): a transparent 0–100 score before you install.",
       shot3:"Manage installed skills — view, smoke-test, credentials, uninstall.",
+      shot4:"技能管家 (Skill butler) — an embedded live Hermes terminal + a deterministic, no-LLM butler.",
+      shot5:"学习技能 (Learn) — distill a native Hermes skill from a path, URL or pasted text.",
       startTitle:"Get started", startSub:"Install the plugin into your Hermes home and enable it.",
       startPip:"As a pip package:", startDir:"Or as a directory plugin:",
       licTitle:"License & editions",
@@ -211,10 +221,15 @@ hermes plugins enable omnilimb</pre>
       f7t:"发现与体检", f7d:"跨市场浏览榜单，安装前对单个技能做体检评分。",
       f8t:"审计日志", f8d:"可选的本地 JSONL 审计日志，可在仪表盘查看工具调用记录。",
       f9t:"双后端", f9d:"既能桥接真实的 openclaw / clawhub CLI，也能用完全脱钩的原生 Python 底座 —— 无需 Node。",
+      f10t:"学习技能（新）", f10d:"从任意来源 —— 本地路径、URL 或粘贴文本 —— 蒸馏出原生 Hermes 技能，校验后写入你的 Hermes 技能库。",
+      f11t:"技能管家（新）", f11d:"内嵌一个实时 Hermes 终端，外加一个确定性(不调大模型)的管家，为你体检、推荐、诊断技能。",
+      f12t:"转换为原生技能", f12d:"把已安装的市场技能转换成原生 Hermes 技能 —— 确定性或 AI 策展，均过结构校验循环。",
       shotsTitle:"实际效果", shotsSub:"来自 Omnilimb 仪表盘标签页的真实截图。",
       shot1:"跨市场发现榜单 —— 推荐、上升、热门、最新。",
       shot2:"一键体检:安装前给出透明的 0–100 分。",
       shot3:"管理已安装技能 —— 查看、冒烟测试、凭据、卸载。",
+      shot4:"技能管家 —— 内嵌实时 Hermes 终端 + 确定性(不调大模型)的技能管家。",
+      shot5:"学习技能 —— 从路径、URL 或粘贴文本蒸馏出原生 Hermes 技能。",
       startTitle:"快速开始", startSub:"把插件装进你的 Hermes 主目录并启用。",
       startPip:"作为 pip 包安装：", startDir:"或作为目录插件：",
       licTitle:"许可与版本",

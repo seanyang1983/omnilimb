@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',Helvetica,Arial,sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="470" viewBox="0 0 1200 470" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'PingFang SC','Microsoft YaHei',Helvetica,Arial,sans-serif">
   <defs>
     <linearGradient id="a2" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#5b8cff"/>
@@ -8,14 +8,14 @@
       <path d="M0,0 L7,3 L0,6 Z" fill="#5b8cff"/>
     </marker>
   </defs>
-  <rect width="1200" height="440" rx="18" fill="#0c0e14"/>
-  <rect x="0.5" y="0.5" width="1199" height="439" rx="18" fill="none" stroke="#27304a"/>
+  <rect width="1200" height="470" rx="18" fill="#0c0e14"/>
+  <rect x="0.5" y="0.5" width="1199" height="469" rx="18" fill="none" stroke="#27304a"/>
 
-  <text x="40" y="48" fill="#e8ecf6" font-size="22" font-weight="700">Omnilimb 如何工作</text>
-  <text x="40" y="74" fill="#9aa4be" font-size="14">Hermes 是大脑,Omnilimb 是确定性的手和脚 —— 执行路径上从不调用模型。</text>
+  <text x="40" y="46" fill="#e8ecf6" font-size="22" font-weight="700">Omnilimb 如何工作</text>
+  <text x="40" y="72" fill="#9aa4be" font-size="14">Hermes 是大脑,Omnilimb 是确定性的手和脚 —— 执行路径上从不调用模型。</text>
 
   <!-- Brain -->
-  <g transform="translate(40,120)">
+  <g transform="translate(40,128)">
     <rect width="220" height="120" rx="14" fill="#141824" stroke="url(#a2)" stroke-width="2"/>
     <text x="110" y="42" text-anchor="middle" fill="#e8ecf6" font-size="18" font-weight="700">Hermes</text>
     <text x="110" y="68" text-anchor="middle" fill="#9aa4be" font-size="12">大脑</text>
@@ -24,12 +24,12 @@
   </g>
 
   <!-- arrow 1 -->
-  <line x1="262" y1="180" x2="330" y2="180" stroke="#5b8cff" stroke-width="2" marker-end="url(#arr)"/>
-  <text x="296" y="168" text-anchor="middle" fill="#36e0c0" font-size="11">工具调用</text>
-  <text x="296" y="200" text-anchor="middle" fill="#9aa4be" font-size="10">结构化 JSON</text>
+  <line x1="262" y1="188" x2="330" y2="188" stroke="#5b8cff" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="296" y="176" text-anchor="middle" fill="#36e0c0" font-size="11">工具调用</text>
+  <text x="296" y="208" text-anchor="middle" fill="#9aa4be" font-size="10">结构化 JSON</text>
 
   <!-- Omnilimb -->
-  <g transform="translate(340,108)">
+  <g transform="translate(340,116)">
     <rect width="260" height="224" rx="14" fill="#1b2030" stroke="#5b8cff" stroke-width="2"/>
     <text x="130" y="36" text-anchor="middle" fill="#e8ecf6" font-size="18" font-weight="700">Omnilimb</text>
     <text x="130" y="58" text-anchor="middle" fill="#9aa4be" font-size="12">确定性执行 · 不调用 LLM</text>
@@ -52,30 +52,34 @@
   </g>
 
   <!-- arrow 2 -->
-  <line x1="602" y1="220" x2="670" y2="220" stroke="#5b8cff" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="602" y1="228" x2="670" y2="228" stroke="#5b8cff" stroke-width="2" marker-end="url(#arr)"/>
 
   <!-- Targets -->
-  <g transform="translate(680,108)">
-    <text x="0" y="-2" fill="#9aa4be" font-size="12">执行目标</text>
-    <g transform="translate(0,8)">
-      <rect width="230" height="46" rx="9" fill="#141824" stroke="#27304a"/>
-      <text x="16" y="29" fill="#e8ecf6" font-size="13">🔎  技能市场(多市场)</text>
+  <g transform="translate(680,104)">
+    <text x="0" y="-4" fill="#9aa4be" font-size="12">执行目标</text>
+    <g transform="translate(0,6)">
+      <rect width="272" height="44" rx="9" fill="#141824" stroke="#27304a"/>
+      <text x="16" y="28" fill="#e8ecf6" font-size="13">🔎  技能市场(多市场)</text>
     </g>
-    <g transform="translate(0,62)">
-      <rect width="230" height="46" rx="9" fill="#141824" stroke="#27304a"/>
-      <text x="16" y="29" fill="#e8ecf6" font-size="13">📦  Docker 沙箱(默认断网)</text>
+    <g transform="translate(0,58)">
+      <rect width="272" height="44" rx="9" fill="#141824" stroke="#27304a"/>
+      <text x="16" y="28" fill="#e8ecf6" font-size="13">📦  Docker 沙箱(默认断网)</text>
     </g>
-    <g transform="translate(0,116)">
-      <rect width="230" height="46" rx="9" fill="#141824" stroke="#27304a"/>
-      <text x="16" y="29" fill="#e8ecf6" font-size="13">🌐  Playwright 浏览器</text>
+    <g transform="translate(0,110)">
+      <rect width="272" height="44" rx="9" fill="#141824" stroke="#27304a"/>
+      <text x="16" y="28" fill="#e8ecf6" font-size="13">🌐  Playwright 浏览器</text>
     </g>
-    <g transform="translate(0,170)">
-      <rect width="230" height="46" rx="9" fill="#141824" stroke="#27304a"/>
-      <text x="16" y="29" fill="#e8ecf6" font-size="13">🧩  python / node / bash / go</text>
+    <g transform="translate(0,162)">
+      <rect width="272" height="44" rx="9" fill="#141824" stroke="#27304a"/>
+      <text x="16" y="28" fill="#e8ecf6" font-size="13">🧩  python / node / bash / go</text>
+    </g>
+    <g transform="translate(0,214)">
+      <rect width="272" height="44" rx="9" fill="#0e1f1b" stroke="#36e0c0"/>
+      <text x="16" y="28" fill="#36e0c0" font-size="13">✨  转换 &amp; 学习 → 原生技能</text>
     </g>
   </g>
 
   <!-- return arrow -->
-  <path d="M900 360 C 900 410, 150 410, 150 246" fill="none" stroke="#27304a" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#arr)"/>
-  <text x="525" y="404" text-anchor="middle" fill="#9aa4be" font-size="12">结构化 JSON 结果返回给智能体 —— 零额外推理</text>
+  <path d="M816 396 C 816 440, 150 440, 150 254" fill="none" stroke="#27304a" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#arr)"/>
+  <text x="483" y="436" text-anchor="middle" fill="#9aa4be" font-size="12">结构化 JSON 结果返回给智能体 —— 零额外推理</text>
 </svg>
