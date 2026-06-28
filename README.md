@@ -22,12 +22,17 @@
 
 **Your Hermes agent is the brain. Omnilimb is the hands and feet.**
 
-Omnilimb is a Hermes plugin that lets an agent *find, install, run and manage*
+Built for the latest **Hermes Agent (v0.17.0)**, Omnilimb is a Hermes plugin
+that lets an agent *find, install, run and manage*
 [OpenClaw / ClawHub](https://clawhub.ai) community skills — and gives it an
 isolated sandbox, a real Playwright browser, and multi-language runtimes. Every
 capability is exposed as a small, **deterministic structured-JSON tool** the
 agent calls directly, so there are **zero extra LLM tokens on the execution
 path** and no second "agent loop" burning your budget.
+
+New in 1.0: **Learn (学习技能)** — point Omnilimb at any source and it distills a
+native Hermes skill for you. Drive it from the dashboard's visual **`/learn`**
+form, or just tell the agent **"学习 &lt;something&gt;"** in plain language.
 
 > ℹ️ Compatible with OpenClaw &amp; ClawHub; not affiliated with them.
 > "Omnilimb" is an independent product ([omnilimb.com](https://www.omnilimb.com)).
@@ -79,7 +84,7 @@ structured-JSON tools the agent can call:
 | `claw_skill_update` | Re-resolve + reinstall stale market skills |
 
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/tools.svg" alt="The eight Omnilimb tools plus the optional dashboard UI" width="100%" />
+  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/tools.svg" alt="The structured-JSON tools the agent calls directly" width="100%" />
 </p>
 
 ## Convert & learn — turn anything into a native Hermes skill
@@ -97,8 +102,10 @@ Two free tools take you from "found a skill" to "Hermes has it natively":
 Both run a structural **validation loop**, write **transactionally**, and are
 **idempotent** (re-running an unchanged source is a no-op, matched by source
 hash). Output lands in `<HERMES_HOME>/skills/<name>/` and loads like any native
-skill. Drive them from the dashboard's **技能管家 → 学习技能** form, or just tell
-the agent *"learn &lt;source&gt;"*.
+skill. Drive **Learn** from the dashboard's visual **技能管家 → 学习技能 (`/learn`)**
+form, or just tell the agent in plain language — *"learn &lt;source&gt;"* /
+*"学习 &lt;来源&gt;"*. Everything you convert or learn shows up together in the
+dashboard's **My skills (我的技能)** library, tagged by origin (转换 / 学习).
 
 ## Quickstart
 
@@ -167,21 +174,26 @@ Set `omnilimb.backend` in `~/.hermes/config.yaml` (or `OMNILIMB_BACKEND`):
 
 A dependency-free web UI ships in `dashboard/` for the Hermes dashboard (rebuilt
 for the v0.17.0 plugin SDK; bilingual EN / 简体中文). After enabling the plugin
-and restarting `hermes dashboard`, an **Omnilimb** tab appears (after *Skills*):
+and restarting `hermes dashboard`, an **Omnilimb** tab appears (after *Skills*),
+with these sub-tabs:
 
+- **技能管家 (Skill butler)** — the default view: a deterministic, **no-LLM**
+  butler that health-checks, recommends and diagnoses your skills (and scans the
+  audit log) from quick actions or a typed command — with the **学习技能
+  (learn-from-any-source)** form built right in.
 - **Search** — discovery across markets, plus a **Discover** mode (recommended /
-  rising / hot / newest leaderboards + category filter) and a per-skill health
-  check (体检).
+  rising / hot / newest leaderboards + category filter), a per-skill health
+  check (体检), and a one-click **全部体检 (health-check all)** that scores every
+  result (0–100 + grade) *before* you install.
 - **Installed** — each skill expands to a detail view: 体检 health score,
   readiness (binaries + API keys), credentials, `SKILL.md` view/edit, smoke
-  test, update badges, and export/import.
-- **Converted** — skills converted to native Hermes skills (front-matter view +
-  guarded uninstall).
+  test, a one-click **Update** (with live progress), **→ Hermes** convert, and
+  export/import.
+- **My skills (我的技能)** — the native skills you've **converted and learned**,
+  gathered in one library and tagged by origin (转换 / 学习), with a front-matter
+  view and guarded uninstall.
 - **Favorites** — bookmarked skills.
-- **Audit** — the optional JSONL audit log.
-- **技能管家 (Skill butler)** — an embedded live Hermes terminal, a deterministic
-  no-LLM butler (health-check / recommend / diagnose / scan audit), and a
-  **learn-from-any-source** form.
+- **审查 (Audit)** — the optional JSONL audit log.
 - **Settings** — backend / market / sandbox / cache / paths, with a compact
   overview.
 
@@ -189,14 +201,23 @@ The UI follows the active dashboard theme and language automatically.
 
 ### See it in action
 
-Live skill search, a one-click **health check (体检)** with a transparent 0–100
-score, and installed-skill management — all in the dashboard tab (click to enlarge):
+Real screenshots from the Omnilimb dashboard tab — the deterministic skill
+butler, market search with one-click **全部体检 (health-check all)**, installed-skill
+management, the **学习技能 (Learn)** form, and your converted + learned library
+(click any image to enlarge):
 
 <table>
 <tr>
-<td width="33%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-search.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-search.jpg" alt="Live skill search for PPT across markets"/></a><br/><sub><b>Search</b> — live ClawHub results for “PPT”.</sub></td>
-<td width="33%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-healthcheck.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-healthcheck.jpg" alt="Per-skill health check with score breakdown"/></a><br/><sub><b>Health check</b> — transparent 0–100 score.</sub></td>
-<td width="33%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-installed.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-installed.jpg" alt="Installed-skills management"/></a><br/><sub><b>Installed</b> — manage everything you’ve added.</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-steward.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-steward.jpg" alt="Omnilimb skill butler (技能管家)"/></a><br/><sub><b>技能管家 (Skill butler)</b> — a deterministic, no-LLM butler: health-check, recommend, diagnose, plus Learn.</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-search.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-search.jpg" alt="Omnilimb market search with one-click health-check all"/></a><br/><sub><b>Search</b> — one-click “Health-check all” scores every result (0–100 + grade) before you install.</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-installed.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-installed.jpg" alt="Omnilimb installed-skills management"/></a><br/><sub><b>Installed</b> — health, credentials, smoke-test, Update &amp; → Hermes convert.</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-learn.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-learn.jpg" alt="Omnilimb learn a native Hermes skill from any source"/></a><br/><sub><b>学习技能 (Learn)</b> — distill a native Hermes skill from a path, URL or text.</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-myskills.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-myskills.jpg" alt="Omnilimb My skills — converted and learned native skills in one library"/></a><br/><sub><b>My skills (我的技能)</b> — converted &amp; learned native skills in one library.</sub></td>
+<td width="50%" valign="top"></td>
 </tr>
 </table>
 

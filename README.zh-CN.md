@@ -22,11 +22,15 @@
 
 **你的 Hermes 智能体是大脑,Omnilimb 是它的手和脚。**
 
-Omnilimb 是一个 Hermes 插件,让智能体能够*查找、安装、运行和管理*
-[OpenClaw / ClawHub](https://clawhub.ai) 社区技能,还为它配上隔离沙箱、真实的
-Playwright 浏览器和多语言运行时。每一项能力都暴露为一个小巧、**确定性的结构化
-JSON 工具**,由智能体直接调用——因此**执行路径上零额外 LLM token**,不会再起一个
-"二级智能体循环"去烧你的预算。
+为最新的 **Hermes Agent(v0.17.0)** 打造,Omnilimb 是一个 Hermes 插件,让智能体
+能够*查找、安装、运行和管理* [OpenClaw / ClawHub](https://clawhub.ai) 社区技能,
+还为它配上隔离沙箱、真实的 Playwright 浏览器和多语言运行时。每一项能力都暴露为一个
+小巧、**确定性的结构化 JSON 工具**,由智能体直接调用——因此**执行路径上零额外 LLM
+token**,不会再起一个"二级智能体循环"去烧你的预算。
+
+1.0 新增:**学习技能(Learn)**——把 Omnilimb 指向任意来源,它就为你蒸馏出一个原生
+Hermes 技能。可在仪表盘的可视化 **`/learn`** 表单里操作,或直接用大白话对智能体说
+**"学习 &lt;某样东西&gt;"**。
 
 > ℹ️ 兼容 OpenClaw 与 ClawHub,但与其无官方关联。
 > "Omnilimb" 是独立产品([omnilimb.com](https://www.omnilimb.com))。
@@ -76,7 +80,7 @@ pip install omnilimb        # 然后:hermes plugins enable omnilimb
 | `claw_skill_update` | 重新解析并重装过期的市场技能 |
 
 <p align="center">
-  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/tools-zh.svg" alt="Omnilimb 的八个工具与可选仪表盘 UI" width="100%" />
+  <img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/tools-zh.svg" alt="Omnilimb 的结构化 JSON 工具,由智能体直接调用" width="100%" />
 </p>
 
 ## 转换与学习 —— 把任何东西变成原生 Hermes 技能
@@ -91,7 +95,9 @@ pip install omnilimb        # 然后:hermes plugins enable omnilimb
 
 两者都走结构**校验循环**、**事务写入**、且**幂等**(来源没变重复运行是空操作,
 按来源哈希匹配)。产物落在 `<HERMES_HOME>/skills/<name>/`,像任何原生技能一样加载。
-可在仪表盘 **技能管家 → 学习技能** 表单里用,或直接对智能体说*「学习 <来源>」*。
+**学习技能**可在仪表盘的可视化 **技能管家 → 学习技能(`/learn`)** 表单里操作,或直接
+用大白话对智能体说——*"learn &lt;来源&gt;"* / *"学习 &lt;来源&gt;"*。所有转换或学习
+得到的技能都会一起出现在仪表盘的 **我的技能** 库里,并带「转换 / 学习」来源标签。
 
 ## 快速开始
 
@@ -157,30 +163,42 @@ python scripts/demo.py menu                    # 交互式
 ## 仪表盘 UI(可选)
 
 `dashboard/` 内含一个零依赖的 Web UI(已按 v0.17.0 插件 SDK 重建;中英文双语)。
-启用插件并重启 `hermes dashboard` 后,会在 *技能* 之后出现一个 **Omnilimb** 标签页:
+启用插件并重启 `hermes dashboard` 后,会在 *技能* 之后出现一个 **Omnilimb** 标签页,
+内含以下子标签:
 
+- **技能管家** —— 默认视图:一个确定性(**不调大模型**)的管家,用快捷动作或直接
+  打命令为你体检、推荐、诊断技能(还能扫审计日志),并内置**学习技能(从任意来源
+  学习)**表单。
 - **搜索** —— 跨市场发现,外加**发现**模式(推荐 / 上升 / 热门 / 最新 榜单 + 分类
-  筛选)和单技能体检评分。
+  筛选)、单技能体检评分,以及一键 **全部体检** —— 安装*前*就给每条结果 0–100 分+评级。
 - **已安装** —— 每个技能可展开详情:体检评分、就绪检查(命令 + API Key)、凭据、
-  `SKILL.md` 查看/编辑、冒烟测试、更新徽标、导入/导出。
-- **已转换** —— 转换成原生 Hermes 的技能(前置元数据查看 + 受保护卸载)。
+  `SKILL.md` 查看/编辑、冒烟测试、一键 **更新**(带实时进度)、**→ Hermes** 转换、
+  以及导入/导出。
+- **我的技能** —— 把你**转换与学习**得到的原生技能汇集到一个库,按来源标注
+  (转换 / 学习),带前置元数据查看与受保护卸载。
 - **收藏** —— 收藏的技能。
-- **审计** —— 可选的 JSONL 审计日志。
-- **技能管家** —— 内嵌实时 Hermes 终端、一个确定性(不调大模型)的技能管家
-  (体检 / 推荐 / 诊断 / 扫审计),以及一个**从任意来源学习**的表单。
+- **审查** —— 可选的 JSONL 审计日志。
 - **设置** —— 后端 / 市场 / 沙箱 / 缓存 / 路径,底部带紧凑概览。
 
 UI 会自动跟随当前仪表盘的主题与语言。
 
 ### 实际效果
 
-实时技能搜索、一键**体检**(透明的 0–100 分)、已安装技能管理 —— 都在仪表盘标签页里(点击放大):
+来自 Omnilimb 仪表盘标签页的真实截图 —— 确定性技能管家、带一键**全部体检**的市场
+搜索、已安装技能管理、**学习技能** 表单,以及你转换+学习产出的技能库(点击任意图片放大):
 
 <table>
 <tr>
-<td width="33%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-search-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-search-zh.jpg" alt="实时搜索 PPT 技能"/></a><br/><sub><b>搜索</b> —— 对「PPT」的实时 ClawHub 搜索。</sub></td>
-<td width="33%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-healthcheck-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-healthcheck-zh.jpg" alt="单技能体检与评分明细"/></a><br/><sub><b>体检</b> —— 透明的 0–100 分。</sub></td>
-<td width="33%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-installed-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-installed-zh.jpg" alt="已安装技能管理"/></a><br/><sub><b>已安装</b> —— 统一管理你装的技能。</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-steward-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-steward-zh.jpg" alt="技能管家"/></a><br/><sub><b>技能管家</b> —— 确定性(不调大模型)的管家:体检、推荐、诊断,外加学习技能。</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-search-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-search-zh.jpg" alt="跨市场搜索与一键全部体检"/></a><br/><sub><b>搜索</b> —— 一键「全部体检」,安装前给每条结果 0–100 分+评级。</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-installed-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-installed-zh.jpg" alt="已安装技能管理"/></a><br/><sub><b>已安装</b> —— 体检、凭据、冒烟测试,外加「更新」和「→ Hermes 转换」。</sub></td>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-learn-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-learn-zh.jpg" alt="从任意来源学习原生 Hermes 技能"/></a><br/><sub><b>学习技能</b> —— 从路径、URL 或粘贴文本蒸馏出原生 Hermes 技能。</sub></td>
+</tr>
+<tr>
+<td width="50%" valign="top"><a href="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-myskills-zh.jpg"><img src="https://cdn.jsdelivr.net/gh/seanyang1983/omnilimb@main/docs/assets/ui-myskills-zh.jpg" alt="我的技能 —— 转换与学习的原生技能统一陈列"/></a><br/><sub><b>我的技能</b> —— 转换与学习产出的原生技能统一陈列(带「转换」「学习」来源标签)。</sub></td>
+<td width="50%" valign="top"></td>
 </tr>
 </table>
 
