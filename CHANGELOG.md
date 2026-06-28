@@ -3,6 +3,13 @@
 All notable changes to this project are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/); versioning is [SemVer](https://semver.org/).
 
+## [1.0.2] - 2026-06-28
+
+### Fixed
+- `omnilimb.__version__` now reads from the installed package metadata
+  (`importlib.metadata`) instead of a hardcoded literal, so it always matches
+  the released version instead of drifting (1.0.1 reported `1.0.0`).
+
 ## [1.0.1] - 2026-06-28
 
 Docs & packaging only — no code or API changes.

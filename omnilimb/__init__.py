@@ -28,7 +28,13 @@ from .config import get_settings
 
 logger = logging.getLogger(__name__)
 
-__version__ = "1.0.0"
+try:  # keep __version__ in lockstep with the installed package metadata
+    from importlib.metadata import PackageNotFoundError
+    from importlib.metadata import version as _pkg_version
+
+    __version__ = _pkg_version("omnilimb")
+except (ImportError, PackageNotFoundError):  # source checkout w/o installed metadata
+    __version__ = "1.0.2"
 
 
 def _cli_available() -> bool:

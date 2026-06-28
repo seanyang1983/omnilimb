@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "omnilimb"
-version = "1.0.1"
+version = "1.0.2"
 description = "Run ClawHub skills, sandbox, Playwright browser & multi-language runtimes as Hermes hands/feet. Structured JSON, zero extra LLM tokens."
 readme = "README.md"
 requires-python = ">=3.10"
