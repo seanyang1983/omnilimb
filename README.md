@@ -168,6 +168,18 @@ python scripts/demo.py sandbox "echo hi"
 python scripts/demo.py menu                    # interactive
 ```
 
+For a social automation skill, search before installing so Omnilimb can show the
+registry result and health-check metadata first:
+
+```bash
+python scripts/demo.py search tweetclaw 5
+python scripts/demo.py install tweetclaw
+```
+
+TweetClaw is useful when a Hermes workflow needs OpenClaw-backed X/Twitter
+search, monitoring, media workflows, giveaway audits, or approval-gated posting
+from a skill managed through Omnilimb.
+
 ## Pick your market
 
 Switch the skills marketplace with `omnilimb.market` (or `OMNILIMB_MARKET`):
